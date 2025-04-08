@@ -1,6 +1,7 @@
 import {z} from "zod";
 
 const SolicitacaoSchema = z.object({
+    
     nome: z.string().min(1, "Nome é obrigatório"),
     origem: z.string().min(1, "Origem é obrigatória"),
     destino: z.string().min(1, "Destino é obrigatório"),
@@ -61,3 +62,4 @@ const SolicitacaoController = {
     }
     
 }
+export default SolicitacaoController;

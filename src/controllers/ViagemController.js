@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { v4 as uuidv4 } from 'uuid';
 
 const ViagemSchema = z.object({
     funcionarioId: z.string().uuid({ message: "ID do funcionário inválido" }),

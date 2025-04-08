@@ -1,4 +1,4 @@
-import {express} from 'express';
+import express from 'express';
 import SolicitacaoController from '../controllers/SolicitacaoController.js';
 
 const router = express.Router();

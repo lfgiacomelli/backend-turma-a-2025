@@ -5,13 +5,14 @@ const FuncionarioSchema = z.object({
     telefone: z.string().min(1, "Telefone é obrigatório"),
     email: z.string().email("Email inválido").min(1, "Email é obrigatório"),
     cargo: z.string().min(1, "Cargo é obrigatório"),
+    cnh: z.string().optional(),
 })
 
 const FuncionarioController = {
     async createFuncionario(req, res) {
         try {
             const { nome, telefone, email, cargo } = req.body;
-            FuncionarioSchema.parse({ nome, telefone, email, cargo });
+            FuncionarioSchema.parse({ nome, telefone, email, cargo, cnh });
             res.status(201).json({ message: "Funcionario criado com sucesso" });
         } catch (error) {
             if (error instanceof z.ZodError) {
@@ -31,7 +32,7 @@ const FuncionarioController = {
         try {
             const { id } = req.params;
             const { nome, telefone, email, cargo } = req.body;
-            FuncionarioSchema.parse({ nome, telefone, email, cargo });
+            FuncionarioSchema.parse({ nome, telefone, email, cargo, cnh });
             res.status(200).json({ message: "Funcionario atualizado com sucesso" });
         } catch (error) {
             if (error instanceof z.ZodError) {
