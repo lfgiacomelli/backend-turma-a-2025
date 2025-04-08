@@ -1,14 +1,14 @@
 import { z } from 'zod';
 
 const ViagemSchema = z.object({
-    funcionarioId: z.string().uuid({ message: "ID do funcionário inválido" }),
-    origem: z.string().min(1, "Origem é obrigatória"),
-    destino: z.string().min(1, "Destino é obrigatória"),
-    servico: z.string().min(1, "Serviço é obrigatório"),
-    status: z.enum(['Pendente', 'Aprovada', 'Rejeitada']),
-    data: z.preprocess(arg => new Date(arg), z.date({ message: "Data inválida" })),
-    valor: z.number().positive("O valor deve ser um número positivo"),
-    solicitacaoId: z.string().uuid({ message: "ID da solicitação inválido" })
+    via_funcionarioId: z.string().uuid({ message: "ID do funcionário inválido" }),
+    via_origem: z.string().min(1, "Origem é obrigatória"),
+    via_destino: z.string().min(1, "Destino é obrigatória"),
+    via_servico: z.string().min(1, "Serviço é obrigatório"),
+    via_status: z.enum(['Pendente', 'Aprovada', 'Rejeitada']),
+    via_data: z.preprocess(arg => new Date(arg), z.date({ message: "Data inválida" })),
+    via_valor: z.number().positive("O valor deve ser um número positivo"),
+    via_solicitacaoId: z.string().uuid({ message: "ID da solicitação inválido" })
 });
 
 const ViagemController = {
@@ -16,7 +16,7 @@ const ViagemController = {
         try {
             const { funcionarioId, origem, destino, servico, status, data, valor, solicitacaoId } = req.body;
 
-            ViagemSchema.parse({ funcionarioId, origem, destino, servico, status, data, valor, solicitacaoId });
+            ViagemSchema.parse({ via_funcionarioId, via_origem, via_destino, via_servico, via_status, via_data, via_valor, via_solicitacaoId });
 
             res.status(201).json({ message: "Viagem criada com sucesso" });
         } catch (error) {
@@ -36,9 +36,9 @@ const ViagemController = {
     async updateViagem(req, res) {
         try {
             const { id } = req.params;
-            const { funcionarioId, origem, destino, servico, status, data, valor, solicitacaoId } = req.body;
+            const { via_funcionarioId, via_origem, via_destino, via_servico, via_status, via_data, via_valor, via_solicitacaoId } = req.body;
 
-            ViagemSchema.parse({ funcionarioId, origem, destino, servico, status, data, valor, solicitacaoId });
+            ViagemSchema.parse({ via_funcionarioId, via_origem, via_destino, via_servico, via_status, via_data, via_valor, via_solicitacaoId });
 
             res.status(200).json({ message: "Viagem atualizada com sucesso" });
         } catch (error) {

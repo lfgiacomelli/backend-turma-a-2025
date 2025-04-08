@@ -2,19 +2,19 @@ import {z} from "zod";
 
 const SolicitacaoSchema = z.object({
     
-    nome: z.string().min(1, "Nome é obrigatório"),
-    origem: z.string().min(1, "Origem é obrigatória"),
-    destino: z.string().min(1, "Destino é obrigatório"),
-    servico: z.string().min(1, "Serviço é obrigatório"),
-    status: z.enum(['Pendente', 'Aprovada', 'Rejeitada']),
-    data: z.preprocess(arg => new Date(arg), z.date({ message: "Data inválida" })),
+    sol_nome: z.string().min(1, "Nome é obrigatório"),
+    sol_origem: z.string().min(1, "Origem é obrigatória"),
+    sol_destino: z.string().min(1, "Destino é obrigatório"),
+    sol_servico: z.string().min(1, "Serviço é obrigatório"),
+    sol_status: z.enum(['Pendente', 'Aprovada', 'Rejeitada']),
+    sol_data: z.preprocess(arg => new Date(arg), z.date({ message: "Data inválida" })),
 });
 
 const SolicitacaoController = {
     async createSolicitacao(req, res) {
         try {
-            const { nome, origem, destino, servico, status, data } = req.body;
-            SolicitacaoSchema.parse({ nome, origem, destino, servico, status, data });
+            const { sol_nome, sol_origem, sol_destino, sol_servico, sol_status, sol_data } = req.body;
+            SolicitacaoSchema.parse({ sol_nome, sol_origem, sol_destino, sol_servico, sol_status, sol_data });
             res.status(201).json({ message: "Solicitação criada com sucesso" });
         } catch (error) {
             if (error instanceof z.ZodError) {
@@ -33,8 +33,8 @@ const SolicitacaoController = {
     async updateSolicitacao(req, res) {
         try {
             const { id } = req.params;
-            const { nome, origem, destino,  servico, status, data } = req.body;
-            SolicitacaoSchema.parse({ nome, origem, destino,  servico, status, data });
+            const { sol_nome, sol_origem, sol_destino, sol_servico, sol_status, sol_data } = req.body;
+            SolicitacaoSchema.parse({ sol_nome, sol_origem, sol_destino,  sol_servico, sol_status, sol_data });
             res.status(200).json({ message: "Solicitação atualizada com sucesso" });
         } catch (error) {
             if (error instanceof z.ZodError) {

@@ -1,17 +1,17 @@
 import {z} from "zod";
 
 const UsuarioSchema = z.object({
-    nome: z.string().min(1, "Nome é obrigatório"),
-    telefone: z.string().min(1, "Telefone é obrigatório"),
-    email: z.string().email("Email inválido").min(1, "Email é obrigatório"),
-    senha: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
+    usu_nome: z.string().min(1, "Nome é obrigatório"),
+    usu_telefone: z.string().min(1, "Telefone é obrigatório"),
+    usu_email: z.string().email("Email inválido").min(1, "Email é obrigatório"),
+    usu_senha: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
 });
 
 const UsuarioController = {
     async createUsuario(req, res) {
         try {
-            const { nome, telefone, email, senha } = req.body;
-            UsuarioSchema.parse({ nome, telefone, email, senha });
+            const { usu_nome, usu_telefone, usu_email, usu_senha } = req.body;
+            UsuarioSchema.parse({ usu_nome, usu_telefone, usu_email, usu_senha });
             res.status(201).json({ message: "Usuário criado com sucesso" });
         } catch (error) {
             if (error instanceof z.ZodError) {
@@ -30,8 +30,8 @@ const UsuarioController = {
     async updateUsuario(req, res) {
         try {
             const { id } = req.params;
-            const { nome, telefone, email, senha } = req.body;
-            UsuarioSchema.parse({ nome, telefone, email, senha });
+            const { usu_nome, usu_telefone, usu_email, usu_senha } = req.body;
+            UsuarioSchema.parse({ usu_nome, usu_telefone, usu_email, usu_senha });
             res.status(200).json({ message: "Usuário atualizado com sucesso" });
         } catch (error) {
             if (error instanceof z.ZodError) {
