@@ -3,9 +3,8 @@ import SolicitacaoController from '../controllers/SolicitacaoController.js';
 
 const router = express.Router();
 
-router.post('/solicitacao', SolicitacaoController.createSolicitacao);
-router.patch('/solicitacao/:id', SolicitacaoController.updateSolicitacao);
-router.delete('/solicitacao/:id', SolicitacaoController.deleteSolicitacao);
-router.get('/solicitacao/:id', SolicitacaoController.getSolicitacao);
+router.post('/', SolicitacaoController.createSolicitacao); 
+router.patch('/:id', SolicitacaoController.updateSolicitacao);
+router.delete('/:id', SolicitacaoController.deleteSolicitacao); 
 
 export default router;

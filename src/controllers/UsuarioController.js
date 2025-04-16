@@ -1,4 +1,4 @@
-import {z} from "zod";
+import { z } from "zod";
 
 const UsuarioSchema = z.object({
     usu_nome: z.string().min(1, "Nome é obrigatório"),
@@ -16,17 +16,17 @@ const UsuarioController = {
         } catch (error) {
             if (error instanceof z.ZodError) {
                 return res.status(400).json({
-                    message: "Erro de validação", errors: error.errors.map(
-                        err => ({
-                            atributo: err.path[0],
-                            message: err.message,
-                        })
-                    )
-                })
+                    message: "Erro de validação",
+                    errors: error.errors.map(err => ({
+                        atributo: err.path[0],
+                        message: err.message,
+                    }))
+                });
             }
             res.status(500).json({ message: error.message });
         }
     },
+
     async updateUsuario(req, res) {
         try {
             const { id } = req.params;
@@ -36,26 +36,22 @@ const UsuarioController = {
         } catch (error) {
             if (error instanceof z.ZodError) {
                 return res.status(400).json({
-                    message: "erro de validação", details: error.errors})
+                    message: "Erro de validação",
+                    details: error.errors
+                });
             }
             res.status(500).json({ message: error.message });
         }
     },
-    async deleteUsuario(req, res){
+
+    async deleteUsuario(req, res) {
         try {
             const { id } = req.params;
             res.status(200).json({ message: "Usuário deletado com sucesso" });
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
-    },
-    async getUsuario(req, res) {
-        try {
-            const { id } = req.params;
-            res.status(200).json({ message: "Usuário encontrado com sucesso" });
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-        }
     }
-}
+};
+
 export default UsuarioController;

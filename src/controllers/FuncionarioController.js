@@ -6,7 +6,7 @@ const FuncionarioSchema = z.object({
     fun_email: z.string().email("Email inválido").min(1, "Email é obrigatório"),
     fun_cargo: z.string().min(1, "Cargo é obrigatório"),
     fun_cnh: z.string().optional(),
-})
+});
 
 const FuncionarioController = {
     async createFuncionario(req, res) {
@@ -17,13 +17,12 @@ const FuncionarioController = {
         } catch (error) {
             if (error instanceof z.ZodError) {
                 return res.status(400).json({
-                    message: "Erro de validação", errors: error.errors.map(
-                        err => ({
-                            atributo: err.path[0],
-                            message: err.message,
-                        })
-                    )
-                })
+                    message: "Erro de validação",
+                    errors: error.errors.map(err => ({
+                        atributo: err.path[0],
+                        message: err.message,
+                    }))
+                });
             }
             res.status(500).json({ message: error.message });
         }
@@ -37,27 +36,21 @@ const FuncionarioController = {
         } catch (error) {
             if (error instanceof z.ZodError) {
                 return res.status(400).json({
-                    message: "erro de validação", details: error.errors})
+                    message: "Erro de validação",
+                    details: error.errors
+                });
             }
             res.status(500).json({ message: error.message });
         }
     },
-    async deleteFuncionario(req, res){
+    async deleteFuncionario(req, res) {
         try {
             const { id } = req.params;
             res.status(200).json({ message: "Funcionario deletado com sucesso" });
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
-    },
-    async getFuncionario(req, res) {
-        try {
-            const { id } = req.params;
-            res.status(200).json({ message: "Funcionario encontrado com sucesso" });
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-        }
     }
-}
+};
 
 export default FuncionarioController;

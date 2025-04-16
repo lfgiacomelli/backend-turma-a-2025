@@ -1,7 +1,6 @@
-import {z} from "zod";
+import { z } from "zod";
 
 const SolicitacaoSchema = z.object({
-    
     sol_nome: z.string().min(1, "Nome é obrigatório"),
     sol_origem: z.string().min(1, "Origem é obrigatória"),
     sol_destino: z.string().min(1, "Destino é obrigatório"),
@@ -19,13 +18,12 @@ const SolicitacaoController = {
         } catch (error) {
             if (error instanceof z.ZodError) {
                 return res.status(400).json({
-                    message: "Erro de validação", errors: error.errors.map(
-                        err => ({
-                            atributo: err.path[0],
-                            message: err.message,
-                        })
-                    )
-                })
+                    message: "Erro de validação", 
+                    errors: error.errors.map(err => ({
+                        atributo: err.path[0],
+                        message: err.message,
+                    }))
+                });
             }
             res.status(500).json({ message: error.message });
         }
@@ -34,32 +32,26 @@ const SolicitacaoController = {
         try {
             const { id } = req.params;
             const { sol_nome, sol_origem, sol_destino, sol_servico, sol_status, sol_data } = req.body;
-            SolicitacaoSchema.parse({ sol_nome, sol_origem, sol_destino,  sol_servico, sol_status, sol_data });
+            SolicitacaoSchema.parse({ sol_nome, sol_origem, sol_destino, sol_servico, sol_status, sol_data });
             res.status(200).json({ message: "Solicitação atualizada com sucesso" });
         } catch (error) {
             if (error instanceof z.ZodError) {
                 return res.status(400).json({
-                    message: "erro de validação", details: error.errors})
+                    message: "Erro de validação", 
+                    details: error.errors
+                });
             }
             res.status(500).json({ message: error.message });
         }
     },
-    async deleteSolicitacao(req, res){
+    async deleteSolicitacao(req, res) {
         try {
             const { id } = req.params;
             res.status(200).json({ message: "Solicitação deletada com sucesso" });
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
-    },
-    async getSolicitacao(req, res) {
-        try {
-            const { id } = req.params;
-            res.status(200).json({ message: "Solicitação encontrada com sucesso" });
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-        }
     }
-    
 }
+
 export default SolicitacaoController;

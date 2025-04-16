@@ -3,9 +3,8 @@ const router = express.Router();
 
 import FuncionarioController from '../controllers/FuncionarioController.js';
 
-router.post('/funcionario', FuncionarioController.createFuncionario);
-router.patch('/funcionario/:id', FuncionarioController.updateFuncionario);
-router.delete('/funcionario/:id', FuncionarioController.deleteFuncionario);
-router.get('/funcionario/:id', FuncionarioController.getFuncionario);
+router.post('/', FuncionarioController.createFuncionario); 
+router.patch('/:id', FuncionarioController.updateFuncionario);
+router.delete('/:id', FuncionarioController.deleteFuncionario);
 
 export default router;

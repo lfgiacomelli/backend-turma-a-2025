@@ -14,8 +14,10 @@ const ViagemSchema = z.object({
 const ViagemController = {
     async createViagem(req, res) {
         try {
-            const { funcionarioId, origem, destino, servico, status, data, valor, solicitacaoId } = req.body;
+            // Desestruturando o corpo da requisição
+            const { via_funcionarioId, via_origem, via_destino, via_servico, via_status, via_data, via_valor, via_solicitacaoId } = req.body;
 
+            // Validando os dados com o Zod
             ViagemSchema.parse({ via_funcionarioId, via_origem, via_destino, via_servico, via_status, via_data, via_valor, via_solicitacaoId });
 
             res.status(201).json({ message: "Viagem criada com sucesso" });
@@ -35,9 +37,10 @@ const ViagemController = {
 
     async updateViagem(req, res) {
         try {
-            const { id } = req.params;
+            const { id } = req.params; // Obtendo o id da URL
             const { via_funcionarioId, via_origem, via_destino, via_servico, via_status, via_data, via_valor, via_solicitacaoId } = req.body;
 
+            // Validando os dados com o Zod
             ViagemSchema.parse({ via_funcionarioId, via_origem, via_destino, via_servico, via_status, via_data, via_valor, via_solicitacaoId });
 
             res.status(200).json({ message: "Viagem atualizada com sucesso" });
@@ -57,21 +60,12 @@ const ViagemController = {
 
     async deleteViagem(req, res) {
         try {
-            const { id } = req.params;
+            const { id } = req.params; 
             res.status(200).json({ message: "Viagem deletada com sucesso" });
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
     },
-
-    async getViagem(req, res) {
-        try {
-            const { id } = req.params;
-            res.status(200).json({ message: "Viagem encontrada com sucesso" });
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-        }
-    }
-}
+};
 
 export default ViagemController;
