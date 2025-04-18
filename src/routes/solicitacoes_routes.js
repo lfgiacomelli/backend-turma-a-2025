@@ -6,5 +6,6 @@ const router = express.Router();
 router.post('/', SolicitacaoController.createSolicitacao); 
 router.patch('/:id', SolicitacaoController.updateSolicitacao);
 router.delete('/:id', SolicitacaoController.deleteSolicitacao); 
+router.get('/:id', SolicitacaoController.getSolicitacao);
 
 export default router;
