@@ -68,10 +68,19 @@ const SolicitacaoController = {
                     sol_nome: "Maria Oliveira",
                     sol_origem: "São Paulo",
                     sol_destino: "Rio de Janeiro",
-                    sol_servico: "Transporte",
+                    sol_servico: "Moto Táxi",
                     sol_status: "Pendente",
                     sol_data: new Date("2023-10-01"),
                 },
+                {
+                    sol_codigo: "b8c2e920-b6db-4c82-bd9e-d3b00ec0c5d2", 
+                    sol_nome: "João Silva",
+                    sol_origem: "Belo Horizonte",
+                    sol_destino: "Salvador",
+                    sol_servico: "Moto Entrega",
+                    sol_status: "Finalizada",
+                    sol_data: new Date("2023-10-02"),
+                }
             ];
             res.status(200).json(data); 
         } catch (error) {

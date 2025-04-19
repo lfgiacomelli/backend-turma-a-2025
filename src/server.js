@@ -1,10 +1,12 @@
 import express from 'express';
+import cors from 'cors'; 
 import routesUsuario from './routes/usuario_routes.js';
 import routesSolicitacao from './routes/solicitacoes_routes.js';
 import routesViagem from './routes/viagem_routes.js';
 import routesFuncionario from './routes/funcionario_routes.js';
 
 const server = express();
+server.use(cors()); 
 const PORT = process.env.PORT || 3000;
 
 server.use(express.json());

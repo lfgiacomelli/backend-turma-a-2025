@@ -6,6 +6,6 @@ import FuncionarioController from '../controllers/FuncionarioController.js';
 router.post('/', FuncionarioController.createFuncionario); 
 router.patch('/:id', FuncionarioController.updateFuncionario);
 router.delete('/:id', FuncionarioController.deleteFuncionario);
-router.get('/:id', FuncionarioController.getFuncionario);
+router.get('/', FuncionarioController.getFuncionario);
 
 export default router;
