@@ -10,7 +10,6 @@ const UsuarioSchema = z.object({
 });
 
 const UsuarioController = {
-    // Criar um novo usuário
     async createUsuario(req, res) {
         try {
             const { usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha } = req.body;
@@ -32,7 +31,6 @@ const UsuarioController = {
         }
     },
 
-    // Atualizar um usuário existente
     async updateUsuario(req, res) {
         try {
             const { id } = req.params;
