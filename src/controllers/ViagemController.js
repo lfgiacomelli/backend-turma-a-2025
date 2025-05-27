@@ -37,7 +37,7 @@ const ViagemController = {
         m.mot_placa
       FROM viagens v
       JOIN funcionarios f ON v.fun_codigo = f.fun_codigo
-      JOIN motos m ON f.mot_codigo = m.mot_codigo
+      JOIN motocicletas m ON f.mot_codigo = m.mot_codigo
       WHERE v.usu_codigo = $1
       ORDER BY v.via_data DESC
     `, [id]);
