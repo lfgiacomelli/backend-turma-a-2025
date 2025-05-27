@@ -21,6 +21,41 @@ const ViagemSchema = z.object({
 });
 
 const ViagemController = {
+    async getInformacoesFuncionarioPorSolicitacao(req, res) {
+        const { solicitacaoId } = req.params;
+
+        if (!solicitacaoId) {
+            return res.status(400).json({ sucesso: false, mensagem: 'ID da solicitação é obrigatório.' });
+        }
+
+        try {
+            const result = await pool.query(`
+          SELECT 
+            v.*, 
+            f.fun_nome, 
+            m.mot_modelo, 
+            m.mot_placa
+          FROM viagens v
+          JOIN funcionarios f ON v.fun_codigo = f.fun_codigo
+          JOIN motocicletas m ON f.fun_codigo = m.fun_codigo
+          WHERE v.sol_codigo = $1
+          LIMIT 1
+        `, [solicitacaoId]);
+
+            if (result.rows.length === 0) {
+                return res.status(404).json({ sucesso: false, mensagem: 'Viagem não encontrada para esta solicitação.' });
+            }
+
+            return res.json(result.rows[0]);
+        } catch (error) {
+            console.error('Erro ao buscar viagem:', error);
+            return res.status(500).json({
+                sucesso: false,
+                mensagem: 'Erro interno no servidor.',
+                detalhes: error.message
+            });
+        }
+    },
     async getViagemPorUsuario(req, res) {
         const { id } = req.params;
 
@@ -30,22 +65,17 @@ const ViagemController = {
 
         try {
             const result = await pool.query(`
-      SELECT 
-  v.*, 
-  f.fun_nome, 
-  m.mot_modelo, 
-  m.mot_placa
-FROM viagens v
-JOIN funcionarios f ON v.fun_codigo = f.fun_codigo
-JOIN motocicletas m ON f.fun_codigo = m.fun_codigo
-WHERE v.usu_codigo = $1
-ORDER BY v.via_data DESC
+          SELECT * from viagens
+          WHERE usu_codigo = $1
+        `, [id]);
 
-    `, [id]);
+            if (result.rows.length === 0) {
+                return res.status(404).json({ sucesso: false, mensagem: 'Nenhuma viagem encontrada para este usuário.' });
+            }
 
             return res.json(result.rows);
         } catch (error) {
-            console.error('Erro ao buscar viagens:', error);
+            console.error('Erro ao buscar viagens por usuário:', error);
             return res.status(500).json({
                 sucesso: false,
                 mensagem: 'Erro interno no servidor.',
@@ -53,7 +83,6 @@ ORDER BY v.via_data DESC
             });
         }
     }
-
 };
 
 export default ViagemController;
