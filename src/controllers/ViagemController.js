@@ -31,15 +31,16 @@ const ViagemController = {
         try {
             const result = await pool.query(`
       SELECT 
-        v.*, 
-        f.fun_nome, 
-        m.mot_modelo, 
-        m.mot_placa
-      FROM viagens v
-      JOIN funcionarios f ON v.fun_codigo = f.fun_codigo
-      JOIN motocicletas m ON f.mot_codigo = m.mot_codigo
-      WHERE v.usu_codigo = $1
-      ORDER BY v.via_data DESC
+  v.*, 
+  f.fun_nome, 
+  m.mot_modelo, 
+  m.mot_placa
+FROM viagens v
+JOIN funcionarios f ON v.fun_codigo = f.fun_codigo
+JOIN motocicletas m ON f.fun_codigo = m.fun_codigo
+WHERE v.usu_codigo = $1
+ORDER BY v.via_data DESC
+
     `, [id]);
 
             return res.json(result.rows);
