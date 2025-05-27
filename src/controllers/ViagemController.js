@@ -25,8 +25,32 @@ const ViagemController = {
     try {
       const body = ViagemSchema.parse(req.body);
 
-      // TODO: inserir no banco, por exemplo:
-      // await pool.query('INSERT INTO viagens (...) VALUES (...)', [...])
+      // Exemplo de inserção no banco, ajuste colunas e valores conforme sua tabela:
+      /*
+      const query = `
+        INSERT INTO viagens (
+          via_codigo, fun_codigo, via_origem, via_destino,
+          ate_codigo, usu_codigo, via_formapagamento, via_observacoes,
+          via_servico, via_status, via_data, via_valor, sol_codigo
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+      `;
+      const values = [
+        body.via_codigo,
+        body.via_funcionarioId,
+        body.via_origem,
+        body.via_destino,
+        body.via_atendenteCodigo || null,
+        body.via_usuarioId || null,
+        body.via_formapagamento || null,
+        body.via_observacoes || null,
+        body.via_servico,
+        body.via_status,
+        body.via_data,
+        body.via_valor,
+        body.via_solicitacaoId
+      ];
+      await pool.query(query, values);
+      */
 
       res.status(201).json({ message: "Viagem criada com sucesso" });
     } catch (error) {
@@ -39,7 +63,8 @@ const ViagemController = {
           })),
         });
       }
-      res.status(500).json({ message: error.message });
+      console.error('Erro no createViagem:', error);
+      res.status(500).json({ message: error.message || 'Erro interno no servidor' });
     }
   },
 
@@ -48,8 +73,33 @@ const ViagemController = {
       const { id } = req.params;
       const body = ViagemSchema.parse(req.body);
 
-      // TODO: atualizar no banco, ex:
-      // await pool.query('UPDATE viagens SET ... WHERE via_codigo = $1', [id, ...])
+      // Exemplo update, ajuste conforme sua tabela:
+      /*
+      const query = `
+        UPDATE viagens SET
+          fun_codigo = $1, via_origem = $2, via_destino = $3,
+          ate_codigo = $4, usu_codigo = $5, via_formapagamento = $6,
+          via_observacoes = $7, via_servico = $8, via_status = $9,
+          via_data = $10, via_valor = $11, sol_codigo = $12
+        WHERE via_codigo = $13
+      `;
+      const values = [
+        body.via_funcionarioId,
+        body.via_origem,
+        body.via_destino,
+        body.via_atendenteCodigo || null,
+        body.via_usuarioId || null,
+        body.via_formapagamento || null,
+        body.via_observacoes || null,
+        body.via_servico,
+        body.via_status,
+        body.via_data,
+        body.via_valor,
+        body.via_solicitacaoId,
+        id
+      ];
+      await pool.query(query, values);
+      */
 
       res.status(200).json({ message: `Viagem ${id} atualizada com sucesso` });
     } catch (error) {
@@ -62,7 +112,8 @@ const ViagemController = {
           })),
         });
       }
-      res.status(500).json({ message: error.message });
+      console.error('Erro no updateViagem:', error);
+      res.status(500).json({ message: error.message || 'Erro interno no servidor' });
     }
   },
 
@@ -70,12 +121,15 @@ const ViagemController = {
     try {
       const { id } = req.params;
 
-      // TODO: deletar do banco, ex:
-      // await pool.query('DELETE FROM viagens WHERE via_codigo = $1', [id]);
+      // Exemplo delete:
+      /*
+      await pool.query('DELETE FROM viagens WHERE via_codigo = $1', [id]);
+      */
 
       res.status(200).json({ message: `Viagem ${id} deletada com sucesso` });
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      console.error('Erro no deleteViagem:', error);
+      res.status(500).json({ message: error.message || 'Erro interno no servidor' });
     }
   },
 
@@ -95,23 +149,21 @@ const ViagemController = {
 
       const { rows } = await pool.query(query, values);
 
-      const viagens = rows.map((row) => {
-        return ViagemSchema.parse({
-          via_codigo: row.via_codigo,
-          via_funcionarioId: row.fun_codigo,
-          via_solicitacaoId: row.sol_codigo,
-          via_usuarioId: row.usu_codigo,
-          via_origem: row.via_origem,
-          via_destino: row.via_destino,
-          via_formapagamento: row.via_formapagamento,
-          via_observacoes: row.via_observacoes,
-          via_atendenteCodigo: row.ate_codigo,
-          via_servico: row.via_servico,
-          via_status: row.via_status,
-          via_data: row.via_data,
-          via_valor: Number(row.via_valor),
-        });
-      });
+      const viagens = rows.map(row => ViagemSchema.parse({
+        via_codigo: row.via_codigo,
+        via_funcionarioId: row.fun_codigo,
+        via_solicitacaoId: row.sol_codigo,
+        via_usuarioId: row.usu_codigo,
+        via_origem: row.via_origem,
+        via_destino: row.via_destino,
+        via_formapagamento: row.via_formapagamento,
+        via_observacoes: row.via_observacoes,
+        via_atendenteCodigo: row.ate_codigo,
+        via_servico: row.via_servico,
+        via_status: row.via_status,
+        via_data: row.via_data,
+        via_valor: Number(row.via_valor),
+      }));
 
       res.status(200).json(viagens);
     } catch (error) {
@@ -124,6 +176,7 @@ const ViagemController = {
           })),
         });
       }
+      console.error('Erro no getViagem:', error);
       res.status(500).json({ message: error.message || 'Erro ao buscar viagens' });
     }
   },
@@ -136,16 +189,15 @@ const ViagemController = {
     }
 
     try {
-      const result = await pool.query(
-        'SELECT * FROM viagens WHERE usu_codigo = $1 ORDER BY via_data DESC',
-        [id]
-      );
-      return res.json(result.rows);
+      const query = 'SELECT * FROM viagens WHERE usu_codigo = $1 ORDER BY via_data DESC';
+      const result = await pool.query(query, [id]);
+
+      return res.status(200).json(result.rows);
     } catch (error) {
-      console.error('Erro ao buscar viagens:', error);
+      console.error('Erro no getViagemPorUsuario:', error);
       return res.status(500).json({ sucesso: false, mensagem: 'Erro interno no servidor.' });
     }
-  },
+  }
 };
 
 export default ViagemController;
