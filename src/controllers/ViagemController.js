@@ -150,7 +150,65 @@ const ViagemController = {
             console.error('Erro ao buscar viagens:', error);
             return res.status(500).json({ sucesso: false, mensagem: 'Erro interno no servidor.', detalhes: error.message });
         }
+    },
+    // Adicione este método ao seu ViagemController
+async getFuncionarioPorViagem(req, res) {
+    const { solicitacaoId } = req.params;
+
+    if (!solicitacaoId) {
+        return res.status(400).json({ 
+            sucesso: false, 
+            mensagem: 'ID da solicitação é obrigatório.' 
+        });
     }
+
+    try {
+        const viagemResult = await pool.query(
+            'SELECT via_codigo, fun_codigo FROM viagens WHERE sol_codigo = $1',
+            [solicitacaoId]
+        );
+
+        if (viagemResult.rows.length === 0) {
+            return res.status(404).json({ 
+                sucesso: false, 
+                mensagem: 'Nenhuma viagem encontrada para esta solicitação.' 
+            });
+        }
+
+        const { fun_codigo } = viagemResult.rows[0];
+
+        const funcionarioResult = await pool.query(
+            `SELECT 
+                f.fun_nome, 
+                m.mot_modelo, 
+                m.mot_placa
+             FROM funcionarios f
+             JOIN motocicletas m ON f.fun_codigo = m.fun_codigo
+             WHERE f.fun_codigo = $1`,
+            [fun_codigo]
+        );
+
+        if (funcionarioResult.rows.length === 0) {
+            return res.status(404).json({ 
+                sucesso: false, 
+                mensagem: 'Funcionário não encontrado ou não possui motocicleta cadastrada.' 
+            });
+        }
+
+        return res.json({
+            sucesso: true,
+            funcionario: funcionarioResult.rows[0]
+        });
+
+    } catch (error) {
+        console.error('Erro ao buscar funcionário:', error);
+        return res.status(500).json({ 
+            sucesso: false, 
+            mensagem: 'Erro interno no servidor.', 
+            detalhes: error.message 
+        });
+    }
+}
 
 };
 
