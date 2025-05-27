@@ -133,54 +133,6 @@ const ViagemController = {
         }
     },
 
-    async getViagem(req, res) {
-        try {
-            const { usuarioId } = req.query;
-
-            let query = 'SELECT * FROM viagens';
-            const values = [];
-
-            if (usuarioId) {
-                query += ' WHERE usu_codigo = $1';
-                values.push(usuarioId);
-            }
-
-            query += ' ORDER BY via_data DESC';
-
-            const { rows } = await pool.query(query, values);
-
-            const viagens = rows.map(row => ViagemSchema.parse({
-                via_codigo: row.via_codigo,
-                via_funcionarioId: row.fun_codigo,
-                via_solicitacaoId: row.sol_codigo,
-                via_usuarioId: row.usu_codigo,
-                via_origem: row.via_origem,
-                via_destino: row.via_destino,
-                via_formapagamento: row.via_formapagamento,
-                via_observacoes: row.via_observacoes,
-                via_atendenteCodigo: row.ate_codigo,
-                via_servico: row.via_servico,
-                via_status: row.via_status,
-                via_data: row.via_data,
-                via_valor: Number(row.via_valor),
-            }));
-
-            res.status(200).json(viagens);
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                return res.status(400).json({
-                    message: "Erro de validação dos dados do banco",
-                    errors: error.errors.map(err => ({
-                        atributo: err.path[0],
-                        message: err.message,
-                    })),
-                });
-            }
-            console.error('Erro no getViagem:', error);
-            res.status(500).json({ message: error.message || 'Erro ao buscar viagens' });
-        }
-    },
-
     async getViagemPorUsuario(req, res) {
         const { id } = req.params;
 
