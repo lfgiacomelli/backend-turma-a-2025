@@ -23,20 +23,18 @@ const SolicitacaoController = {
       // Valida e extrai dados
       const data = SolicitacaoSchema.parse(req.body);
 
-      // Se for Moto Táxi, setar dimensões e peso nulos (como você queria)
       if (data.sol_servico === 'Moto Táxi') {
         data.sol_largura = null;
         data.sol_comprimento = null;
         data.sol_peso = null;
       }
 
-      // Query corrigida: removida vírgula extra no final da lista de VALUES
       const query = `
         INSERT INTO solicitacoes (
           sol_origem, sol_destino, sol_valor,
           sol_formapagamento, sol_distancia, sol_data, usu_codigo,
-          sol_largura, sol_comprimento, sol_peso, sol_servico, sol_observacoes
-        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+          sol_largura, sol_comprimento, sol_peso, sol_servico, sol_observacoes, sol_status
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
         RETURNING *;
       `;
 
@@ -53,11 +51,11 @@ const SolicitacaoController = {
         data.sol_peso,
         data.sol_servico,
         data.sol_observacoes || '',
+        'Pendente',
       ];
 
       const result = await pool.query(query, values);
 
-      // Retorna o objeto criado com status 201
       res.status(201).json(result.rows[0]);
 
     } catch (error) {
@@ -93,7 +91,8 @@ const SolicitacaoController = {
             sol_comprimento = $9,
             sol_peso = $10,
             sol_servico = $11,
-            sol_observacoes = $12
+            sol_observacoes = $12,
+            sol_status = 'Pendente'
         WHERE sol_codigo = $13
         RETURNING *;
       `;
@@ -111,6 +110,7 @@ const SolicitacaoController = {
         data.sol_peso,
         data.sol_servico,
         data.sol_observacoes || '',
+        data.sol_status || 'Pendente',
         id,
       ];
 
