@@ -2,7 +2,6 @@
 import { z } from 'zod';
 import pool from '../db/db.js';
 
-// Schema de validação (pode ser usado para criação/edição futuramente)
 const AnuncioSchema = z.object({
     anu_codigo: z.number(),
     anu_titulo: z.string(),
