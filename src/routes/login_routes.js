@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
 
   try {
     const result = await pool.query(
-      'SELECT usu_codigo, usu_nome, usu_email, usu_senha FROM usuarios WHERE usu_email = $1',
+      'SELECT * FROM usuarios WHERE usu_email = $1',
       [usu_email]
     );
 
@@ -52,6 +52,8 @@ router.post('/', async (req, res) => {
         id: usuario.usu_codigo,
         nome: usuario.usu_nome,
         email: usuario.usu_email,
+        telefone: usuario.usu_telefone,
+        criado_em: usuario.usu_created_at,
       },
     });
   } catch (err) {
