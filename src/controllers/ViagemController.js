@@ -21,118 +21,6 @@ const ViagemSchema = z.object({
 });
 
 const ViagemController = {
-    async createViagem(req, res) {
-        try {
-            const body = ViagemSchema.parse(req.body);
-
-            // Exemplo de inserção no banco, ajuste colunas e valores conforme sua tabela:
-            /*
-            const query = `
-              INSERT INTO viagens (
-                via_codigo, fun_codigo, via_origem, via_destino,
-                ate_codigo, usu_codigo, via_formapagamento, via_observacoes,
-                via_servico, via_status, via_data, via_valor, sol_codigo
-              ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
-            `;
-            const values = [
-              body.via_codigo,
-              body.via_funcionarioId,
-              body.via_origem,
-              body.via_destino,
-              body.via_atendenteCodigo || null,
-              body.via_usuarioId || null,
-              body.via_formapagamento || null,
-              body.via_observacoes || null,
-              body.via_servico,
-              body.via_status,
-              body.via_data,
-              body.via_valor,
-              body.via_solicitacaoId
-            ];
-            await pool.query(query, values);
-            */
-
-            res.status(201).json({ message: "Viagem criada com sucesso" });
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                return res.status(400).json({
-                    message: "Erro de validação",
-                    errors: error.errors.map(err => ({
-                        atributo: err.path[0],
-                        message: err.message,
-                    })),
-                });
-            }
-            console.error('Erro no createViagem:', error);
-            res.status(500).json({ message: error.message || 'Erro interno no servidor' });
-        }
-    },
-
-    async updateViagem(req, res) {
-        try {
-            const { id } = req.params;
-            const body = ViagemSchema.parse(req.body);
-
-            // Exemplo update, ajuste conforme sua tabela:
-            /*
-            const query = `
-              UPDATE viagens SET
-                fun_codigo = $1, via_origem = $2, via_destino = $3,
-                ate_codigo = $4, usu_codigo = $5, via_formapagamento = $6,
-                via_observacoes = $7, via_servico = $8, via_status = $9,
-                via_data = $10, via_valor = $11, sol_codigo = $12
-              WHERE via_codigo = $13
-            `;
-            const values = [
-              body.via_funcionarioId,
-              body.via_origem,
-              body.via_destino,
-              body.via_atendenteCodigo || null,
-              body.via_usuarioId || null,
-              body.via_formapagamento || null,
-              body.via_observacoes || null,
-              body.via_servico,
-              body.via_status,
-              body.via_data,
-              body.via_valor,
-              body.via_solicitacaoId,
-              id
-            ];
-            await pool.query(query, values);
-            */
-
-            res.status(200).json({ message: `Viagem ${id} atualizada com sucesso` });
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                return res.status(400).json({
-                    message: "Erro de validação",
-                    errors: error.errors.map(err => ({
-                        atributo: err.path[0],
-                        message: err.message,
-                    })),
-                });
-            }
-            console.error('Erro no updateViagem:', error);
-            res.status(500).json({ message: error.message || 'Erro interno no servidor' });
-        }
-    },
-
-    async deleteViagem(req, res) {
-        try {
-            const { id } = req.params;
-
-            // Exemplo delete:
-            /*
-            await pool.query('DELETE FROM viagens WHERE via_codigo = $1', [id]);
-            */
-
-            res.status(200).json({ message: `Viagem ${id} deletada com sucesso` });
-        } catch (error) {
-            console.error('Erro no deleteViagem:', error);
-            res.status(500).json({ message: error.message || 'Erro interno no servidor' });
-        }
-    },
-
     async getViagemPorUsuario(req, res) {
         const { id } = req.params;
 
@@ -151,64 +39,103 @@ const ViagemController = {
             return res.status(500).json({ sucesso: false, mensagem: 'Erro interno no servidor.', detalhes: error.message });
         }
     },
-    // Adicione este método ao seu ViagemController
-async getFuncionarioPorViagem(req, res) {
-    const { solicitacaoId } = req.params;
+    async getFuncionarioPorViagem(req, res) {
+        const { solicitacaoId } = req.params;
 
-    if (!solicitacaoId) {
-        return res.status(400).json({ 
-            sucesso: false, 
-            mensagem: 'ID da solicitação é obrigatório.' 
-        });
-    }
-
-    try {
-        const viagemResult = await pool.query(
-            'SELECT via_codigo, fun_codigo FROM viagens WHERE sol_codigo = $1',
-            [solicitacaoId]
-        );
-
-        if (viagemResult.rows.length === 0) {
-            return res.status(404).json({ 
-                sucesso: false, 
-                mensagem: 'Nenhuma viagem encontrada para esta solicitação.' 
+        if (!solicitacaoId) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: 'ID da solicitação é obrigatório.'
             });
         }
 
-        const { fun_codigo } = viagemResult.rows[0];
+        try {
+            const viagemResult = await pool.query(
+                'SELECT via_codigo, fun_codigo FROM viagens WHERE sol_codigo = $1',
+                [solicitacaoId]
+            );
 
-        const funcionarioResult = await pool.query(
-            `SELECT 
+            if (viagemResult.rows.length === 0) {
+                return res.status(404).json({
+                    sucesso: false,
+                    mensagem: 'Nenhuma viagem encontrada para esta solicitação.'
+                });
+            }
+
+            const { fun_codigo } = viagemResult.rows[0];
+
+            const funcionarioResult = await pool.query(
+                `SELECT 
                 f.fun_nome, 
                 m.mot_modelo, 
                 m.mot_placa
              FROM funcionarios f
              JOIN motocicletas m ON f.fun_codigo = m.fun_codigo
              WHERE f.fun_codigo = $1`,
-            [fun_codigo]
-        );
+                [fun_codigo]
+            );
 
-        if (funcionarioResult.rows.length === 0) {
-            return res.status(404).json({ 
-                sucesso: false, 
-                mensagem: 'Funcionário não encontrado ou não possui motocicleta cadastrada.' 
+            if (funcionarioResult.rows.length === 0) {
+                return res.status(404).json({
+                    sucesso: false,
+                    mensagem: 'Funcionário não encontrado ou não possui motocicleta cadastrada.'
+                });
+            }
+
+            return res.json({
+                sucesso: true,
+                funcionario: funcionarioResult.rows[0]
+            });
+
+        } catch (error) {
+            console.error('Erro ao buscar funcionário:', error);
+            return res.status(500).json({
+                sucesso: false,
+                mensagem: 'Erro interno no servidor.',
+                detalhes: error.message
+            });
+        }
+    },
+    async verificarAndamento(req, res) {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: 'ID da viagem é obrigatório.'
             });
         }
 
-        return res.json({
-            sucesso: true,
-            funcionario: funcionarioResult.rows[0]
-        });
+        try {
+            const result = await pool.query(
+                'SELECT * FROM viagens WHERE via_status = $1 AND usu_codigo = $2',
+                ['em andamento', id]
+            );
 
-    } catch (error) {
-        console.error('Erro ao buscar funcionário:', error);
-        return res.status(500).json({ 
-            sucesso: false, 
-            mensagem: 'Erro interno no servidor.', 
-            detalhes: error.message 
-        });
+            if (result.rows.length === 0) {
+                return res.status(404).json({
+                    sucesso: false,
+                    mensagem: 'Viagem não encontrada ou não está em andamento.'
+                });
+            }
+
+            const viagem = result.rows[0];
+
+            return res.json({
+                sucesso: true,
+                status: viagem.via_status
+            });
+
+        } catch (error) {
+            console.error('Erro ao verificar andamento da viagem:', error);
+            return res.status(500).json({
+                sucesso: false,
+                mensagem: 'Erro interno no servidor.',
+                detalhes: error.message
+            });
+        }
     }
-}
+
 
 };
 
