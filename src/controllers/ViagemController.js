@@ -25,7 +25,7 @@ const ViagemController = {
     try {
       const body = ViagemSchema.parse(req.body);
 
-      // Aqui faria a inserção no banco usando o body
+      // TODO: inserir no banco, por exemplo:
       // await pool.query('INSERT INTO viagens (...) VALUES (...)', [...])
 
       res.status(201).json({ message: "Viagem criada com sucesso" });
@@ -48,7 +48,7 @@ const ViagemController = {
       const { id } = req.params;
       const body = ViagemSchema.parse(req.body);
 
-      // Atualiza a viagem no banco com o id
+      // TODO: atualizar no banco, ex:
       // await pool.query('UPDATE viagens SET ... WHERE via_codigo = $1', [id, ...])
 
       res.status(200).json({ message: `Viagem ${id} atualizada com sucesso` });
@@ -70,6 +70,7 @@ const ViagemController = {
     try {
       const { id } = req.params;
 
+      // TODO: deletar do banco, ex:
       // await pool.query('DELETE FROM viagens WHERE via_codigo = $1', [id]);
 
       res.status(200).json({ message: `Viagem ${id} deletada com sucesso` });
@@ -124,6 +125,25 @@ const ViagemController = {
         });
       }
       res.status(500).json({ message: error.message || 'Erro ao buscar viagens' });
+    }
+  },
+
+  async getViagemPorUsuario(req, res) {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ sucesso: false, mensagem: 'ID do usuário é obrigatório.' });
+    }
+
+    try {
+      const result = await pool.query(
+        'SELECT * FROM viagens WHERE usu_codigo = $1 ORDER BY via_data DESC',
+        [id]
+      );
+      return res.json(result.rows);
+    } catch (error) {
+      console.error('Erro ao buscar viagens:', error);
+      return res.status(500).json({ sucesso: false, mensagem: 'Erro interno no servidor.' });
     }
   },
 };

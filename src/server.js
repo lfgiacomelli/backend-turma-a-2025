@@ -29,7 +29,7 @@ server.use("/api/usuarios", routesUsuario);
 server.use("/api/solicitacoes", routesSolicitacao);
 server.use("/api/viagens", routesViagem);
 server.use("/api/funcionarios", routesFuncionario);
-server.use("/api/login", loginRoutes); // Using the corrected login routes
+server.use("/api/login", loginRoutes);
 
 server.get('/', (req, res) => {
   res.send('Backend server is running!');
