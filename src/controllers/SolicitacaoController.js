@@ -50,6 +50,25 @@ const SolicitacaoController = {
       console.error(error);
       res.status(500).json({ message: "Erro no servidor", detalhe: error.message });
     }
+  },
+  async cancelarSolicitacao(req, res) {
+    const { id } = req.params;
+
+    try {
+      const result = await pool.query(
+        "DELETE FROM solicitacoes WHERE sol_codigo = $1",
+        [id]
+      );
+
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: "Solicitação não encontrada" });
+      }
+
+      res.status(200).json({ message: "Solicitação cancelada com sucesso" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erro no servidor", detalhe: error.message });
+    }
   }
 };
 
