@@ -20,7 +20,6 @@ const SolicitacaoSchema = z.object({
 const SolicitacaoController = {
   async createSolicitacao(req, res) {
     try {
-      // Valida e extrai dados
       const data = SolicitacaoSchema.parse(req.body);
 
       if (data.sol_servico === 'Moto Táxi') {
@@ -153,6 +152,22 @@ const SolicitacaoController = {
       res.status(200).json(result.rows);
     } catch (error) {
       console.error('Erro ao buscar solicitações:', error);
+      res.status(500).json({ message: 'Erro no servidor', detalhe: error.message });
+    }
+  },
+  async getSolicitacaoById(req, res) {
+    const { id } = req.params;
+
+    try {
+      const result = await pool.query('SELECT * FROM solicitacoes WHERE sol_codigo = $1', [id]);
+
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: 'Solicitação não encontrada' });
+      }
+
+      res.status(200).json(result.rows[0]);
+    } catch (error) {
+      console.error('Erro ao buscar solicitação:', error);
       res.status(500).json({ message: 'Erro no servidor', detalhe: error.message });
     }
   },
