@@ -31,7 +31,6 @@ server.use("/api/viagens", routesViagem);
 server.use("/api/funcionarios", routesFuncionario);
 server.use("/api/login", loginRoutes); // Using the corrected login routes
 
-// Simple health check route
 server.get('/', (req, res) => {
   res.send('Backend server is running!');
 });
