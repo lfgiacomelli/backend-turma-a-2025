@@ -2,47 +2,38 @@ import { z } from 'zod';
 import pool from '../db/db.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid';
 
-// Schema de validação com Zod
 const UsuarioSchema = z.object({
-  usu_codigo: z.string().uuid({ message: "Código do usuário inválido" }),
   usu_nome: z.string().min(1, "Nome é obrigatório"),
   usu_telefone: z.string().min(1, "Telefone é obrigatório"),
   usu_email: z.string().email("Email inválido").min(1, "Email é obrigatório"),
   usu_senha: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
+  usu_created_at: z.string().optional(),
 });
+
 
 const UsuarioController = {
   async createUsuario(req, res) {
     try {
-      const { usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha } = req.body;
+      const usu_codigo = uuidv4();
+      const { usu_nome, usu_telefone, usu_email, usu_senha, usu_created_at } = req.body;
+      UsuarioSchema.parse({ usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha, usu_created_at });
 
-      // Validar dados recebidos
-      UsuarioSchema.parse({ usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha });
-
-      // Verificar se email já existe
       const emailExiste = await pool.query('SELECT usu_codigo FROM usuarios WHERE usu_email = $1', [usu_email]);
       if (emailExiste.rowCount > 0) {
         return res.status(409).json({ message: 'Email já está em uso.' });
       }
 
-      // Hash da senha
       const salt = await bcrypt.genSalt(10);
       const hashedSenha = await bcrypt.hash(usu_senha, salt);
 
-      // Inserir usuário no banco
       await pool.query(
-        `INSERT INTO usuarios (usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha)
+        `INSERT INTO usuarios (usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha, usu_created_at)
          VALUES ($1, $2, $3, $4, $5)`,
         [usu_codigo, usu_nome, usu_telefone, usu_email, hashedSenha]
       );
 
-      // Criar token JWT para login automático
-      const token = jwt.sign(
-        { usu_codigo, usu_email },
-        process.env.JWT_SECRET || 'segredo_supersecreto',
-        { expiresIn: '1d' }
-      );
 
       return res.status(201).json({ message: "Usuário criado com sucesso", token });
     } catch (error) {
@@ -67,7 +58,6 @@ const UsuarioController = {
 
       UsuarioSchema.parse({ usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha });
 
-      // Atualiza usuário (exemplo simples)
       const query = `
         UPDATE usuarios SET
           usu_nome = $1,
