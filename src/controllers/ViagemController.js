@@ -134,7 +134,30 @@ const ViagemController = {
                 detalhes: error.message
             });
         }
-    }
+    },
+    async getViagemById(req, res) {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(400).json({ sucesso: false, mensagem: 'ID da viagem é obrigatório.' });
+        }
+
+        try {
+            const result = await pool.query(
+                'SELECT * FROM viagens WHERE via_codigo = $1',
+                [id]
+            );
+
+            if (result.rows.length === 0) {
+                return res.status(404).json({ sucesso: false, mensagem: 'Viagem não encontrada.' });
+            }
+
+            return res.json(result.rows[0]);
+        } catch (error) {
+            console.error('Erro ao buscar viagem:', error);
+            return res.status(500).json({ sucesso: false, mensagem: 'Erro interno no servidor.', detalhes: error.message });
+        }
+    },
 
 
 };
