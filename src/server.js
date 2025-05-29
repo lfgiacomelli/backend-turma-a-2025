@@ -6,7 +6,8 @@ import routesSolicitacao from './routes/solicitacoes_routes.js';
 import routesViagem from './routes/viagem_routes.js';
 import routesFuncionario from './routes/funcionario_routes.js';
 import loginRoutes from './routes/login_routes.js';
-import anuncioRoutes from './routes/anuncio_routes.js';  // IMPORTAR AQUI
+import routesAnuncio from './routes/anuncio_routes.js'; 
+import routesAvaliacao from './routes/avaliacao_routes.js';
 
 const server = express();
 
@@ -25,7 +26,8 @@ server.use("/api/solicitacoes", routesSolicitacao);
 server.use("/api/viagens", routesViagem);
 server.use("/api/funcionarios", routesFuncionario);
 server.use("/api/login", loginRoutes);
-server.use('/api/anuncios', anuncioRoutes);
+server.use('/api/anuncios', routesAnuncio);
+server.use('/api/avaliacoes', routesAvaliacao);
 
 server.get('/', (req, res) => {
   res.send('Backend server is running!');

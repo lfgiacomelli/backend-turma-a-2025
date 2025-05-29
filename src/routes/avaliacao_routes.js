@@ -9,7 +9,7 @@ router.patch('/:id', AvaliacaoController.updateAvaliacao);
 
 router.delete('/:id', AvaliacaoController.deleteAvaliacao);
 
-router.get('/', AvaliacaoController.getAllAvaliacoes);
+router.get('/', AvaliacaoController.getAvaliacoes);
 
 router.get('/usuario/:id', AvaliacaoController.getAvaliacoesByUsuario);
 
