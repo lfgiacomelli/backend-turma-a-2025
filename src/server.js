@@ -1,7 +1,10 @@
-import express from 'express';
-import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
+console.log('JWT_SECRET:', process.env.JWT_SECRET);
+
+import express from 'express';
+import cors from 'cors';
+
 
 
 import routesUsuario from './routes/usuario_routes.js';
@@ -9,7 +12,7 @@ import routesSolicitacao from './routes/solicitacoes_routes.js';
 import routesViagem from './routes/viagem_routes.js';
 import routesFuncionario from './routes/funcionario_routes.js';
 import loginRoutes from './routes/login_routes.js';
-import routesAnuncio from './routes/anuncio_routes.js'; 
+import routesAnuncio from './routes/anuncio_routes.js';
 import routesAvaliacao from './routes/avaliacao_routes.js';
 
 const server = express();
