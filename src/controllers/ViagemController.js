@@ -102,13 +102,17 @@ const ViagemController = {
         if (!id) {
             return res.status(400).json({
                 sucesso: false,
-                mensagem: 'ID da viagem é obrigatório.'
+                mensagem: 'ID do usuário é obrigatório.'
             });
         }
 
         try {
             const result = await pool.query(
-                'SELECT * FROM viagens WHERE usu_codigo = $1 ORDER BY via_data DESC LIMIT 1',
+                `SELECT via_codigo, via_status 
+             FROM viagens 
+             WHERE usu_codigo = $1 
+             ORDER BY via_data DESC 
+             LIMIT 1`,
                 [id]
             );
 
@@ -120,8 +124,10 @@ const ViagemController = {
             }
 
             const viagem = result.rows[0];
-
-            return res.json(viagem);
+            return res.json({
+                sucesso: true,
+                viagem: viagem
+            });
 
         } catch (error) {
             console.error('Erro ao buscar última viagem:', error);
