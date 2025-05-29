@@ -33,8 +33,12 @@ router.post('/', async (req, res) => {
     }
 
     const usuario = result.rows[0];
-    let hash = usuario.usu_senha;
 
+    if (!usuario.usu_ativo) {
+      return res.status(403).json({ sucesso: false, mensagem: 'Usuário banido ou inativo.' });
+    }
+
+    let hash = usuario.usu_senha;
     if (hash.startsWith('$2y$')) {
       hash = '$2a$' + hash.slice(4);
     }
