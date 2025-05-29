@@ -10,6 +10,7 @@ const UsuarioSchema = z.object({
   usu_email: z.string().email("Email inválido").min(1, "Email é obrigatório"),
   usu_senha: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
   usu_created_at: z.string().optional(),
+  usu_updated_at: z.string().optional(),
 });
 
 
@@ -17,8 +18,8 @@ const UsuarioController = {
   async createUsuario(req, res) {
     try {
       const usu_codigo = uuidv4();
-      const { usu_nome, usu_telefone, usu_email, usu_senha, usu_created_at } = req.body;
-      UsuarioSchema.parse({ usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha, usu_created_at });
+      const { usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at } = req.body;
+      UsuarioSchema.parse({ usu_codigo, usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at });
 
       const emailExiste = await pool.query('SELECT usu_codigo FROM usuarios WHERE usu_email = $1', [usu_email]);
       if (emailExiste.rowCount > 0) {
@@ -29,9 +30,9 @@ const UsuarioController = {
       const hashedSenha = await bcrypt.hash(usu_senha, salt);
 
       await pool.query(
-        `INSERT INTO usuarios (usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha, usu_created_at)
+        `INSERT INTO usuarios (usu_codigo, usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at)
          VALUES ($1, $2, $3, $4, $5)`,
-        [usu_codigo, usu_nome, usu_telefone, usu_email, hashedSenha]
+        [usu_codigo, usu_nome, usu_telefone, usu_ativo, usu_email, hashedSenha]
       );
 
 
@@ -54,16 +55,17 @@ const UsuarioController = {
   async updateUsuario(req, res) {
     try {
       const { id } = req.params;
-      const { usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha } = req.body;
+      const { usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha, usu_updated_at } = req.body;
 
-      UsuarioSchema.parse({ usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha });
+      UsuarioSchema.parse({ usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha, usu_updated_at });
 
       const query = `
         UPDATE usuarios SET
           usu_nome = $1,
           usu_telefone = $2,
           usu_email = $3,
-          usu_senha = $4
+          usu_senha = $4,
+          usu_updated_at = NOW()
         WHERE usu_codigo = $5
       `;
 
