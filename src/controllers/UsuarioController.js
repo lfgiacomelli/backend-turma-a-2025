@@ -17,9 +17,8 @@ const UsuarioSchema = z.object({
 const UsuarioController = {
   async createUsuario(req, res) {
     try {
-      const usu_codigo = uuidv4();
       const { usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at } = req.body;
-      UsuarioSchema.parse({ usu_codigo, usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at });
+      UsuarioSchema.parse({ usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at });
 
       const emailExiste = await pool.query('SELECT usu_codigo FROM usuarios WHERE usu_email = $1', [usu_email]);
       if (emailExiste.rowCount > 0) {
@@ -31,9 +30,9 @@ const UsuarioController = {
 
       await pool.query(
         `INSERT INTO usuarios 
-    (usu_codigo, usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at)
-   VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-        [usu_codigo, usu_nome, usu_telefone, usu_ativo, usu_email, hashedSenha, usu_created_at, usu_updated_at]
+    ( usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at)
+   VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [ usu_nome, usu_telefone, usu_ativo, usu_email, hashedSenha, usu_created_at, usu_updated_at]
       );
 
 
