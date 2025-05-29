@@ -7,7 +7,7 @@ router.get('/:id', ViagemController.getViagemPorUsuario);
 
 router.get('/solicitacao/:solicitacaoId/funcionario', ViagemController.getFuncionarioPorViagem);
 
-router.get('/andamento/:id', ViagemController.verificarAndamento);
+router.get('/andamento/:id', ViagemController.verificarUltimaViagem);
 router.get('/viagem/:id', ViagemController.getViagemById);
 
 export default router;

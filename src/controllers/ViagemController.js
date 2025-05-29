@@ -96,7 +96,7 @@ const ViagemController = {
             });
         }
     },
-    async verificarAndamento(req, res) {
+    async verificarUltimaViagem(req, res) {
         const { id } = req.params;
 
         if (!id) {
@@ -108,26 +108,23 @@ const ViagemController = {
 
         try {
             const result = await pool.query(
-                'SELECT * FROM viagens WHERE via_status = $1 AND usu_codigo = $2',
-                ['em andamento', id]
+                'SELECT * FROM viagens WHERE usu_codigo = $1 ORDER BY via_data DESC LIMIT 1',
+                [id]
             );
 
             if (result.rows.length === 0) {
                 return res.status(404).json({
                     sucesso: false,
-                    mensagem: 'Viagem não encontrada ou não está em andamento.'
+                    mensagem: 'Nenhuma viagem encontrada para este usuário.'
                 });
             }
 
             const viagem = result.rows[0];
 
-            return res.json({
-                sucesso: true,
-                status: viagem.via_status
-            });
+            return res.json(viagem);
 
         } catch (error) {
-            console.error('Erro ao verificar andamento da viagem:', error);
+            console.error('Erro ao buscar última viagem:', error);
             return res.status(500).json({
                 sucesso: false,
                 mensagem: 'Erro interno no servidor.',
