@@ -30,10 +30,12 @@ const UsuarioController = {
       const hashedSenha = await bcrypt.hash(usu_senha, salt);
 
       await pool.query(
-        `INSERT INTO usuarios (usu_codigo, usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at)
-         VALUES ($1, $2, $3, $4, $5)`,
-        [usu_codigo, usu_nome, usu_telefone, usu_ativo, usu_email, hashedSenha]
+        `INSERT INTO usuarios 
+    (usu_codigo, usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at)
+   VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [usu_codigo, usu_nome, usu_telefone, usu_ativo, usu_email, hashedSenha, usu_created_at, usu_updated_at]
       );
+
 
 
       return res.status(201).json({ message: "Usuário criado com sucesso", token });
