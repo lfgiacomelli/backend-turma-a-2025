@@ -28,14 +28,21 @@ const UsuarioController = {
       const salt = await bcrypt.genSalt(10);
       const hashedSenha = await bcrypt.hash(usu_senha, salt);
 
-      await pool.query(
+      const result = await pool.query(
         `INSERT INTO usuarios 
-    ( usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at)
-   VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-        [ usu_nome, usu_telefone, usu_ativo, usu_email, hashedSenha, usu_created_at, usu_updated_at]
+      (usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING usu_codigo`,
+        [usu_nome, usu_telefone, usu_ativo, usu_email, hashedSenha, usu_created_at, usu_updated_at]
       );
 
+      const usu_codigo = result.rows[0].usu_codigo;
 
+      const token = jwt.sign(
+        { codigo: usu_codigo, nome: usu_nome, email: usu_email },
+        process.env.JWT_SECRET,
+        { expiresIn: '24h' }
+      );
 
       return res.status(201).json({ message: "Usuário criado com sucesso", token });
     } catch (error) {
