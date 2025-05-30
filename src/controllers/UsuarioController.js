@@ -17,23 +17,18 @@ const UsuarioSchema = z.object({
 const UsuarioController = {
   async createUsuario(req, res) {
     try {
-      // Extrai os dados do corpo da requisição
       const { usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at } = req.body;
 
-      // Valida os dados usando o schema zod
       UsuarioSchema.parse({ usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at });
 
-      // Verifica se já existe um usuário com o email informado
       const emailExiste = await pool.query('SELECT usu_codigo FROM usuarios WHERE usu_email = $1', [usu_email]);
       if (emailExiste.rowCount > 0) {
         return res.status(409).json({ message: 'Email já está em uso.' });
       }
 
-      // Gera um salt e hasheia a senha
       const salt = await bcrypt.genSalt(10);
       const hashedSenha = await bcrypt.hash(usu_senha, salt);
 
-      // Insere o usuário no banco e retorna o código gerado (usu_codigo)
       const result = await pool.query(
         `INSERT INTO usuarios 
       (usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at)
@@ -44,18 +39,16 @@ const UsuarioController = {
 
       const usu_codigo = result.rows[0].usu_codigo;
 
-      // Gera o token JWT usando a chave secreta do .env
       const token = jwt.sign(
         { codigo: usu_codigo, nome: usu_nome, email: usu_email },
         process.env.JWT_SECRET,
         { expiresIn: '24h' }
       );
+n
 
-      // Retorna sucesso com o token
       return res.status(201).json({ message: "Usuário criado com sucesso", token });
 
     } catch (error) {
-      // Tratamento de erro de validação com Zod
       if (error instanceof z.ZodError) {
         return res.status(400).json({
           message: "Erro de validação",
@@ -70,7 +63,21 @@ const UsuarioController = {
       return res.status(500).json({ message: error.message });
     }
   },
+  async getUsuarioById(req, res) {
+    try {
+      const { id } = req.params;
 
+      const result = await pool.query('SELECT usu_codigo, usu_nome, usu_telefone, usu_email FROM usuarios WHERE usu_codigo = $1', [id]);
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: "Usuário não encontrado" });
+      }
+
+      return res.status(200).json(result.rows[0]);
+    } catch (error) {
+      console.error('Erro getUsuarioById:', error);
+      return res.status(500).json({ message: error.message });
+    }
+  },
   async updateUsuario(req, res) {
     try {
       const { id } = req.params;
