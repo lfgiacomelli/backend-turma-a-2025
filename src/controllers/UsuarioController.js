@@ -31,22 +31,15 @@ const UsuarioController = {
 
       const result = await pool.query(
         `INSERT INTO usuarios 
-      (usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-      RETURNING usu_codigo`,
+(usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
+RETURNING usu_codigo`,
         [usu_nome, usu_telefone, usu_ativo, usu_email, hashedSenha, usu_created_at, usu_updated_at]
       );
 
       const usu_codigo = result.rows[0].usu_codigo;
 
-      const token = jwt.sign(
-        { codigo: usu_codigo, nome: usu_nome, email: usu_email },
-        process.env.JWT_SECRET,
-        { expiresIn: '24h' }
-      );
-n
-
-      return res.status(201).json({ message: "Usuário criado com sucesso", token });
+      return res.status(201).json({ message: "Usuário criado com sucesso", usu_codigo });
 
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -58,7 +51,6 @@ n
           })),
         });
       }
-      // Erros gerais
       console.error('Erro createUsuario:', error);
       return res.status(500).json({ message: error.message });
     }
