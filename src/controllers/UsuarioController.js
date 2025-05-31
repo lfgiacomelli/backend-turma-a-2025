@@ -17,29 +17,83 @@ const UsuarioSchema = z.object({
 const UsuarioController = {
   async createUsuario(req, res) {
     try {
-      const { usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at } = req.body;
+      const {
+        usu_nome,
+        usu_telefone,
+        usu_ativo,
+        usu_email,
+        usu_senha,
+        usu_created_at,
+        usu_updated_at,
+      } = req.body;
 
-      UsuarioSchema.parse({ usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at });
+      // Validação com Zod
+      UsuarioSchema.parse({
+        usu_nome,
+        usu_telefone,
+        usu_ativo,
+        usu_email,
+        usu_senha,
+        usu_created_at,
+        usu_updated_at,
+      });
 
-      const emailExiste = await pool.query('SELECT usu_codigo FROM usuarios WHERE usu_email = $1', [usu_email]);
+      // Verifica se o e-mail já existe
+      const emailExiste = await pool.query(
+        'SELECT usu_codigo FROM usuarios WHERE usu_email = $1',
+        [usu_email]
+      );
       if (emailExiste.rowCount > 0) {
         return res.status(409).json({ message: 'Email já está em uso.' });
       }
 
+      // Criptografa a senha
       const salt = await bcrypt.genSalt(10);
       const hashedSenha = await bcrypt.hash(usu_senha, salt);
 
+      // Insere o usuário e retorna o ID
       const result = await pool.query(
         `INSERT INTO usuarios 
-(usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at)
-VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING usu_codigo`,
-        [usu_nome, usu_telefone, usu_ativo, usu_email, hashedSenha, usu_created_at, usu_updated_at]
+        (usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING usu_codigo`,
+        [
+          usu_nome,
+          usu_telefone,
+          usu_ativo,
+          usu_email,
+          hashedSenha,
+          usu_created_at,
+          usu_updated_at,
+        ]
       );
 
       const usu_codigo = result.rows[0].usu_codigo;
 
-      return res.status(201).json({ message: "Usuário criado com sucesso", usu_codigo });
+      // Busca os dados completos do usuário
+      const usuarioResult = await pool.query(
+        `SELECT usu_codigo, usu_nome, usu_email, usu_telefone, usu_created_at 
+       FROM usuarios WHERE usu_codigo = $1`,
+        [usu_codigo]
+      );
+
+      const usuario = usuarioResult.rows[0];
+
+      // Se desejar gerar um token JWT, pode descomentar esta parte:
+      // const token = jwt.sign({ id: usuario.usu_codigo }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+      return res.status(201).json({
+        message: "Usuário criado com sucesso",
+        usuario: {
+          id: usuario.usu_codigo,
+          nome: usuario.usu_nome,
+          email: usuario.usu_email,
+          telefone: usuario.usu_telefone,
+          criado_em: usuario.usu_created_at,
+        },
+        // token: token, // caso use JWT
+        token: 'logado' // ou apenas um marcador simples, se não estiver usando JWT ainda
+      });
 
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -51,6 +105,7 @@ RETURNING usu_codigo`,
           })),
         });
       }
+
       console.error('Erro createUsuario:', error);
       return res.status(500).json({ message: error.message });
     }
