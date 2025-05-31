@@ -161,6 +161,36 @@ const ViagemController = {
             return res.status(500).json({ sucesso: false, mensagem: 'Erro interno no servidor.', detalhes: error.message });
         }
     },
+    async viagemEmAndamento(req, res) {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(400).json({ sucesso: false, mensagem: 'ID do usuário é obrigatório.' });
+        }
+
+        try {
+            const result = await pool.query(
+                `SELECT * FROM viagens 
+             WHERE usu_codigo = $1 AND via_status = 'em andamento' 
+             ORDER BY via_data DESC`,
+                [id]
+            );
+
+            if (result.rows.length === 0) {
+                return res.status(404).json({ sucesso: false, mensagem: 'Nenhuma viagem em andamento encontrada.' });
+            }
+
+            return res.json({
+                sucesso: true,
+                mensagem: 'Viagem em andamento encontrada.',
+                dados: result.rows,
+            });
+
+        } catch (error) {
+            console.error('Erro ao buscar viagens em andamento:', error);
+            return res.status(500).json({ sucesso: false, mensagem: 'Erro interno no servidor.', detalhes: error.message });
+        }
+    }
 
 
 };
