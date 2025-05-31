@@ -67,7 +67,7 @@ n
     try {
       const { id } = req.params;
 
-      const result = await pool.query('SELECT usu_codigo, usu_nome, usu_telefone, usu_email FROM usuarios WHERE usu_codigo = $1', [id]);
+      const result = await pool.query('SELECT usu_codigo, usu_nome, usu_telefone, usu_email, usu_created_at FROM usuarios WHERE usu_codigo = $1', [id]);
       if (result.rowCount === 0) {
         return res.status(404).json({ message: "Usuário não encontrado" });
       }
