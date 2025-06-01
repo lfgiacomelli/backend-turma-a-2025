@@ -108,7 +108,7 @@ const ViagemController = {
 
         try {
             const result = await pool.query(
-                `SELECT via_codigo, via_status 
+                `SELECT *
              FROM viagens 
              WHERE usu_codigo = $1 
              ORDER BY via_data DESC 
@@ -127,6 +127,7 @@ const ViagemController = {
             return res.json({
                 sucesso: true,
                 viagem: viagem
+
             });
 
         } catch (error) {

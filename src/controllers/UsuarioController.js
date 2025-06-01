@@ -27,7 +27,6 @@ const UsuarioController = {
         usu_updated_at,
       } = req.body;
 
-      // Validação com Zod
       UsuarioSchema.parse({
         usu_nome,
         usu_telefone,
@@ -38,7 +37,6 @@ const UsuarioController = {
         usu_updated_at,
       });
 
-      // Verifica se o e-mail já existe
       const emailExiste = await pool.query(
         'SELECT usu_codigo FROM usuarios WHERE usu_email = $1',
         [usu_email]
@@ -47,11 +45,9 @@ const UsuarioController = {
         return res.status(409).json({ message: 'Email já está em uso.' });
       }
 
-      // Criptografa a senha
       const salt = await bcrypt.genSalt(10);
       const hashedSenha = await bcrypt.hash(usu_senha, salt);
 
-      // Insere o usuário e retorna o ID
       const result = await pool.query(
         `INSERT INTO usuarios 
         (usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at)
@@ -70,7 +66,6 @@ const UsuarioController = {
 
       const usu_codigo = result.rows[0].usu_codigo;
 
-      // Busca os dados completos do usuário
       const usuarioResult = await pool.query(
         `SELECT usu_codigo, usu_nome, usu_email, usu_telefone, usu_created_at 
        FROM usuarios WHERE usu_codigo = $1`,
@@ -91,8 +86,7 @@ const UsuarioController = {
           telefone: usuario.usu_telefone,
           criado_em: usuario.usu_created_at,
         },
-        // token: token, // caso use JWT
-        token: 'logado' // ou apenas um marcador simples, se não estiver usando JWT ainda
+        token: 'logado' 
       });
 
     } catch (error) {
