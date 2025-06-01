@@ -108,8 +108,8 @@ const ViagemController = {
 
         try {
             const result = await pool.query(
-                `SELECT *
-             FROM viagens 
+                `SELECT v*, s.sol_distancia
+             FROM viagens v, solicitacoes s 
              WHERE usu_codigo = $1 
              ORDER BY via_data DESC 
              LIMIT 1`,
