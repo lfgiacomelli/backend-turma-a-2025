@@ -177,7 +177,6 @@ const ViagemController = {
             if (result.rows.length === 0) {
                 return res.status(404).json({ sucesso: false, mensagem: 'Nenhuma viagem em andamento encontrada.' });
             }
-
             return res.json({
                 sucesso: true,
                 mensagem: 'Viagem em andamento encontrada.',
