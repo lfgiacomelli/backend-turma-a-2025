@@ -1,6 +1,10 @@
 import express from 'express';
 import { Pool } from 'pg';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const router = express.Router();
 
@@ -14,6 +18,11 @@ const dbConfig = {
 };
 
 const pool = new Pool(dbConfig);
+
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET não definida no .env');
+}
 
 router.post('/', async (req, res) => {
   const { usu_email, usu_senha } = req.body;
@@ -49,9 +58,16 @@ router.post('/', async (req, res) => {
       return res.status(401).json({ sucesso: false, mensagem: 'Senha inválida.' });
     }
 
+    const token = jwt.sign(
+      { id: usuario.usu_codigo, email: usuario.usu_email },
+      JWT_SECRET,
+      { expiresIn: '45d' }
+    );
+
     res.json({
       sucesso: true,
       mensagem: 'Login realizado com sucesso!',
+      token,
       usuario: {
         id: usuario.usu_codigo,
         nome: usuario.usu_nome,
@@ -60,6 +76,7 @@ router.post('/', async (req, res) => {
         criado_em: usuario.usu_created_at,
       },
     });
+
   } catch (err) {
     console.error('Erro no login:', err);
     res.status(500).json({ sucesso: false, mensagem: 'Erro interno no servidor.' });

@@ -74,9 +74,11 @@ const UsuarioController = {
 
       const usuario = usuarioResult.rows[0];
 
-      // Se desejar gerar um token JWT, pode descomentar esta parte:
-      // const token = jwt.sign({ id: usuario.usu_codigo }, process.env.JWT_SECRET, { expiresIn: '7d' });
-
+      const token = jwt.sign(
+        { id: usuario.usu_codigo },
+        process.env.JWT_SECRET,
+        { expiresIn: '45d' }
+      );
       return res.status(201).json({
         message: "Usuário criado com sucesso",
         usuario: {
@@ -86,7 +88,7 @@ const UsuarioController = {
           telefone: usuario.usu_telefone,
           criado_em: usuario.usu_created_at,
         },
-        token: 'logado' 
+        token: token
       });
 
     } catch (error) {
