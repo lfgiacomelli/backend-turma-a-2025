@@ -166,9 +166,11 @@ const ViagemController = {
 
         try {
             const result = await pool.query(
-                `SELECT * FROM viagens 
-             WHERE usu_codigo = $1 AND via_status = 'em andamento' 
-             ORDER BY via_data DESC`,
+                `SELECT v.*, f.fun_nome, m.mot_modelo, m.mot_placa FROM viagens v 
+                 JOIN funcionarios f ON v.fun_codigo = f.fun_codigo JOIN
+                 motocicletas m ON v.mot_codigo = m.mot_codigo WHERE 
+                 v.usu_codigo = $1 AND v.via_status = 'em andamento'
+                  ORDER BY v.via_data DESC;`,
                 [id]
             );
 
