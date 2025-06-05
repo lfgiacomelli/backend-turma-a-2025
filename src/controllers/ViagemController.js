@@ -167,28 +167,28 @@ const ViagemController = {
         try {
             const result = await pool.query(
                 `SELECT 
-            v.*, 
-            f.fun_nome, 
-            m.mot_modelo, 
-            m.mot_placa
-        FROM 
-            viagens v
-        JOIN 
-            funcionarios f ON v.fun_codigo = f.fun_codigo
-        JOIN 
-            motocicletas m ON f.fun_codigo = m.fun_codigo
-        WHERE 
-            v.usu_codigo = $1 
-            AND v.via_status = 'em andamento'
-        ORDER BY 
-            v.via_data DESC;`,
+                v.*, 
+                f.fun_nome, 
+                m.mot_modelo, 
+                m.mot_placa
+            FROM 
+                viagens v
+            JOIN 
+                funcionarios f ON v.fun_codigo = f.fun_codigo
+            LEFT JOIN 
+                motocicletas m ON f.fun_codigo = m.fun_codigo
+            WHERE 
+                v.usu_codigo = $1 
+                AND v.via_status = 'em andamento'
+            ORDER BY 
+                v.via_data DESC;`,
                 [id]
             );
-
 
             if (result.rows.length === 0) {
                 return res.status(404).json({ sucesso: false, mensagem: 'Nenhuma viagem em andamento encontrada.' });
             }
+
             return res.json({
                 sucesso: true,
                 mensagem: 'Viagem em andamento encontrada.',
@@ -200,6 +200,7 @@ const ViagemController = {
             return res.status(500).json({ sucesso: false, mensagem: 'Erro interno no servidor.', detalhes: error.message });
         }
     }
+
 
 
 };
