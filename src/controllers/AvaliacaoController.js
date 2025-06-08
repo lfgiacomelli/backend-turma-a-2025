@@ -28,7 +28,6 @@ const AvaliacaoController = {
                 ava_data_avaliacao
             });
 
-            // Inserção no banco de dados
             await pool.query(
                 `INSERT INTO avaliacoes 
         (usu_codigo, via_codigo, ava_nota, ava_comentario, ava_data_avaliacao)
