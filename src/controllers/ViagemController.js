@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { enviarEmailAvaliacao } from '../utils/email.js';
 import pool from '../db/db.js';
 
 const ViagemSchema = z.object({
@@ -103,51 +102,41 @@ const ViagemController = {
         if (!id) {
             return res.status(400).json({
                 sucesso: false,
-                mensagem: 'ID do usuário é obrigatório.',
+                mensagem: 'ID do usuário é obrigatório.'
             });
         }
 
         try {
             const result = await pool.query(
-                `SELECT v.via_codigo, v.via_data, v.via_status, u.usu_email, u.usu_nome
-FROM viagens v
-JOIN usuarios u ON v.usu_codigo = u.usu_codigo
-WHERE v.usu_codigo = $1
-  AND v.via_status = 'finalizada'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM avaliacoes a
-    WHERE a.via_codigo = v.via_codigo
-  )
-ORDER BY v.via_data DESC
-LIMIT 1;
-`,
+                `SELECT v.via_codigo, v.via_data, v.via_status
+             FROM viagens v
+             LEFT JOIN avaliacoes a ON a.via_codigo = v.via_codigo
+             WHERE v.usu_codigo = $1
+               AND v.via_status = 'finalizada'
+               AND a.via_codigo IS NULL
+             ORDER BY v.via_data DESC
+             LIMIT 1`,
                 [id]
             );
 
             if (result.rows.length === 0) {
                 return res.status(404).json({
                     sucesso: false,
-                    mensagem: 'Nenhuma viagem finalizada sem avaliação encontrada para este usuário.',
+                    mensagem: 'Nenhuma viagem finalizada sem avaliação encontrada para este usuário.'
                 });
             }
 
-            const viagem = result.rows[0];
-
-            await enviarEmailAvaliacao(viagem.usu_email, viagem.usu_nome, viagem.via_codigo);
-
             return res.json({
                 sucesso: true,
-                viagem,
-                mensagem: 'E-mail de avaliação enviado com sucesso.',
+                viagem: result.rows[0]
             });
 
         } catch (error) {
-            console.error('Erro ao buscar última viagem não avaliada ou enviar email:', error);
+            console.error('Erro ao buscar última viagem não avaliada:', error);
             return res.status(500).json({
                 sucesso: false,
                 mensagem: 'Erro interno no servidor.',
-                detalhes: error.message,
+                detalhes: error.message
             });
         }
     },
