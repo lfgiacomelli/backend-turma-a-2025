@@ -3,12 +3,13 @@ import pool from '../db/db.js';
 import { v4 as uuidv4 } from 'uuid';
 
 const AvaliacaoSchema = z.object({
-    usu_codigo: z.string().uuid("Código do usuário inválido"),
-    via_codigo: z.string().uuid("Código da viagem inválido"),
-    ava_nota: z.number().min(1, "Nota mínima é 1").max(5, "Nota máxima é 5"),
+    usu_codigo: z.number(),
+    via_codigo: z.number(),
+    ava_nota: z.number().min(1).max(5),
     ava_comentario: z.string().optional(),
-    ava_data_avaliacao: z.string().optional(),
+    ava_data_avaliacao: z.string().optional()
 });
+
 
 const AvaliacaoController = {
     async createAvaliacao(req, res) {
@@ -21,7 +22,6 @@ const AvaliacaoController = {
                 ava_data_avaliacao
             } = req.body;
 
-            // Validação com Zod
             AvaliacaoSchema.parse({
                 usu_codigo,
                 via_codigo,
