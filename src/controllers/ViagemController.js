@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import pool from '../db/db.js';
-import { enviarEmailAvaliacao } from '../utils/email.js';
 
 const ViagemSchema = z.object({
     via_codigo: z.string().uuid({ message: "Código da viagem inválido" }),
@@ -109,15 +108,14 @@ const ViagemController = {
 
         try {
             const result = await pool.query(
-                `SELECT v.via_codigo, v.via_data, v.via_status, u.usu_email, u.usu_nome
-       FROM viagens v
-       LEFT JOIN avaliacoes a ON a.via_codigo = v.via_codigo
-       JOIN usuarios u ON v.usu_codigo = u.usu_codigo
-       WHERE v.usu_codigo = $1
-         AND v.via_status = 'finalizada'
-         AND a.via_codigo IS NULL
-       ORDER BY v.via_data DESC
-       LIMIT 1`,
+                `SELECT v.via_codigo, v.via_data, v.via_status
+             FROM viagens v
+             LEFT JOIN avaliacoes a ON a.via_codigo = v.via_codigo
+             WHERE v.usu_codigo = $1
+               AND v.via_status = 'finalizada'
+               AND a.via_codigo IS NULL
+             ORDER BY v.via_data DESC
+             LIMIT 1`,
                 [id]
             );
 
@@ -128,18 +126,13 @@ const ViagemController = {
                 });
             }
 
-            const viagem = result.rows[0];
-
-            await enviarEmailAvaliacao(viagem.usu_email, viagem.usu_nome, viagem.via_codigo);
-
             return res.json({
                 sucesso: true,
-                viagem,
-                mensagem: 'E-mail de avaliação enviado com sucesso.'
+                viagem: result.rows[0]
             });
 
         } catch (error) {
-            console.error('Erro ao buscar/enviar avaliação:', error);
+            console.error('Erro ao buscar última viagem não avaliada:', error);
             return res.status(500).json({
                 sucesso: false,
                 mensagem: 'Erro interno no servidor.',
