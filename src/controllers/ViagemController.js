@@ -96,6 +96,50 @@ const ViagemController = {
             });
         }
     },
+    async getUltimaViagemNaoAvaliada(req, res) {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: 'ID do usuário é obrigatório.'
+            });
+        }
+
+        try {
+            const result = await pool.query(
+                `SELECT v.via_codigo, v.via_data, v.via_status
+             FROM viagens v
+             LEFT JOIN avaliacoes a ON a.via_codigo = v.via_codigo
+             WHERE v.usu_codigo = $1
+               AND v.via_status = 'finalizada'
+               AND a.via_codigo IS NULL
+             ORDER BY v.via_data DESC
+             LIMIT 1`,
+                [id]
+            );
+
+            if (result.rows.length === 0) {
+                return res.status(404).json({
+                    sucesso: false,
+                    mensagem: 'Nenhuma viagem finalizada sem avaliação encontrada para este usuário.'
+                });
+            }
+
+            return res.json({
+                sucesso: true,
+                viagem: result.rows[0]
+            });
+
+        } catch (error) {
+            console.error('Erro ao buscar última viagem não avaliada:', error);
+            return res.status(500).json({
+                sucesso: false,
+                mensagem: 'Erro interno no servidor.',
+                detalhes: error.message
+            });
+        }
+    },
     async verificarUltimaViagem(req, res) {
         const { id } = req.params;
 
