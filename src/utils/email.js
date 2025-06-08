@@ -1,5 +1,4 @@
 import nodemailer from 'nodemailer';
-import path from 'path';
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -28,7 +27,7 @@ export const enviarEmailAvaliacao = async (para, nome, via_codigo) => {
         <div style="text-align: center; margin: 30px 0;">
           <a href="${linkAvaliacao}" 
              style="
-                background-color: #f0f0f0; 
+                background-color: #0070f3; 
                 color: white; 
                 padding: 15px 30px; 
                 text-decoration: none; 
