@@ -50,14 +50,7 @@ export const enviarEmailAvaliacao = async (para, nome, via_codigo) => {
           &copy; 2025 ZoomX - Todos os direitos reservados
         </p>
       </div>
-    `,
-    attachments: [
-      {
-        filename: 'logo.png',
-        path: path.resolve('./assets/logo.png'), // caminho para a imagem local
-        cid: 'logoZoomX', // corresponde ao src="cid:logoZoomX"
-      },
-    ],
+    `
   };
 
   await transporter.sendMail(mailOptions);
