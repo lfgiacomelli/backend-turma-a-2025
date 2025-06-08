@@ -1,7 +1,6 @@
 import pool from '../db/db.js';
-import { z } from 'zod'; // Assumindo que você está usando o Zod para validar
+import { z } from 'zod'; 
 
-// Exemplo simplificado do schema Zod para validar o corpo da requisição
 const SolicitacaoSchema = z.object({
     sol_origem: z.string(),
     sol_destino: z.string(),

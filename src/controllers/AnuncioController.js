@@ -1,4 +1,3 @@
-// controllers/AnuncioController.js
 import { z } from 'zod';
 import pool from '../db/db.js';
 
