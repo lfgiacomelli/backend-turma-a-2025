@@ -1,13 +1,11 @@
 import { z } from 'zod';
 import pool from '../db/db.js';
-import { v4 as uuidv4 } from 'uuid';
-
 const AvaliacaoSchema = z.object({
-    usu_codigo: z.number(),
-    via_codigo: z.number(),
-    ava_nota: z.number().min(1).max(5),
-    ava_comentario: z.string().optional(),
-    ava_data_avaliacao: z.string().optional()
+  usu_codigo: z.coerce.number(), 
+  via_codigo: z.coerce.number(),
+  ava_nota: z.number().min(1).max(5),
+  ava_comentario: z.string().nullable().optional(),
+  ava_data_avaliacao: z.string().datetime(),
 });
 
 
