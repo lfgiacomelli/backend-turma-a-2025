@@ -13,15 +13,14 @@ const AvaliacaoSchema = z.object({
 const AvaliacaoController = {
     async createAvaliacao(req, res) {
         try {
-            const ava_codigo = uuidv4();
             const { usu_codigo, via_codigo, ava_nota, ava_comentario, ava_data_avaliacao } = req.body;
 
             AvaliacaoSchema.parse({ usu_codigo, via_codigo, ava_nota, ava_comentario, ava_data_avaliacao });
 
             await pool.query(
                 `INSERT INTO avaliacoes 
-         (ava_codigo, usu_codigo, via_codigo, ava_nota, ava_comentario, ava_data_avaliacao)
-         VALUES ($1, $2, $3, $4, $5, $6)`,
+         (usu_codigo, via_codigo, ava_nota, ava_comentario, ava_data_avaliacao)
+         VALUES ($1 $2, $3, $4, $5)`,
                 [ava_codigo, usu_codigo, via_codigo, ava_nota, ava_comentario || null, ava_data_avaliacao || new Date().toISOString()]
             );
 
