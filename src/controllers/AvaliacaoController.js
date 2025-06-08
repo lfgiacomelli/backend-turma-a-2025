@@ -13,18 +13,39 @@ const AvaliacaoSchema = z.object({
 const AvaliacaoController = {
     async createAvaliacao(req, res) {
         try {
-            const { usu_codigo, via_codigo, ava_nota, ava_comentario, ava_data_avaliacao } = req.body;
+            const {
+                usu_codigo,
+                via_codigo,
+                ava_nota,
+                ava_comentario,
+                ava_data_avaliacao
+            } = req.body;
 
-            AvaliacaoSchema.parse({ usu_codigo, via_codigo, ava_nota, ava_comentario, ava_data_avaliacao });
+            // Validação com Zod
+            AvaliacaoSchema.parse({
+                usu_codigo,
+                via_codigo,
+                ava_nota,
+                ava_comentario,
+                ava_data_avaliacao
+            });
 
+            // Inserção no banco de dados
             await pool.query(
                 `INSERT INTO avaliacoes 
-         (usu_codigo, via_codigo, ava_nota, ava_comentario, ava_data_avaliacao)
-         VALUES ($1 $2, $3, $4, $5)`,
-                [ava_codigo, usu_codigo, via_codigo, ava_nota, ava_comentario || null, ava_data_avaliacao || new Date().toISOString()]
+        (usu_codigo, via_codigo, ava_nota, ava_comentario, ava_data_avaliacao)
+       VALUES ($1, $2, $3, $4, $5)`,
+                [
+                    usu_codigo,
+                    via_codigo,
+                    ava_nota,
+                    ava_comentario || null,
+                    ava_data_avaliacao || new Date().toISOString()
+                ]
             );
 
             return res.status(201).json({ message: "Avaliação criada com sucesso" });
+
         } catch (error) {
             if (error instanceof z.ZodError) {
                 return res.status(400).json({
@@ -35,7 +56,8 @@ const AvaliacaoController = {
                     })),
                 });
             }
-            console.error('Erro createAvaliacao:', error);
+
+            console.error("Erro createAvaliacao:", error);
             return res.status(500).json({ message: error.message });
         }
     },
