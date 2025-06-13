@@ -34,7 +34,6 @@ server.use("/api/funcionarios", routesFuncionario);
 server.use("/api/login", loginRoutes);
 server.use('/api/anuncios', routesAnuncio);
 server.use('/api/avaliacoes', routesAvaliacao);
-server.use('/api/pagamentos', routesPagamento); 
 
 server.get('/', (req, res) => {
   res.send('Backend server is running!');
