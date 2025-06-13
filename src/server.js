@@ -13,7 +13,6 @@ import routesFuncionario from './routes/funcionario_routes.js';
 import loginRoutes from './routes/login_routes.js';
 import routesAnuncio from './routes/anuncio_routes.js';
 import routesAvaliacao from './routes/avaliacao_routes.js';
-import routesPagamento from './routes/payment_routes.js'; 
 
 const server = express();
 
