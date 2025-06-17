@@ -1,10 +1,10 @@
 import { Pool } from 'pg';
 
 const pool = new Pool({
-  user: 'smithgg415',
-  host: 'dpg-d0kgkoruibrs739hd8f0-a.oregon-postgres.render.com',
-  database: 'zoomx_tcc',
-  password: 'Jtn5fpob64g18cD9hlsZ6cXHPtoK6jTd',
+  user: 'giacomelli_devs',
+  host: 'dpg-d18bupggjchc73ep07vg-a.oregon-postgres.render.com',
+  database: 'zoomx_tcc_fx7z',
+  password: 'NyO6nehZ5tWBFopexVOJrpvCalF0y2ZS', 
   port: 5432,
   ssl: {
     rejectUnauthorized: false, 
