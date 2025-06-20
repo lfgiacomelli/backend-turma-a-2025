@@ -7,18 +7,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const router = express.Router();
-
-const dbConfig = {
-  user: 'smithgg415',
-  host: 'dpg-d0kgkoruibrs739hd8f0-a.oregon-postgres.render.com',
-  database: 'zoomx_tcc',
-  password: 'Jtn5fpob64g18cD9hlsZ6cXHPtoK6jTd',
-  port: 5432,
-  ssl: { rejectUnauthorized: false },
-};
-
-const pool = new Pool(dbConfig);
-
+import pool from '../db/db.js';
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
   throw new Error('JWT_SECRET não definida no .env');
@@ -55,7 +44,6 @@ router.post('/', async (req, res) => {
       return res.status(500).json({ sucesso: false, mensagem: 'Senha não encontrada no banco.' });
     }
 
-    // 👉 Corrigir hash $2y$ (PHP) para $2a$ (Node.js bcrypt)
     if (hash.startsWith('$2y$')) {
       hash = '$2a$' + hash.slice(4);
     }

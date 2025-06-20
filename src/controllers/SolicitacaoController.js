@@ -1,4 +1,4 @@
-import pool from '../db/db.js';
+
 import { z } from 'zod'; 
 
 const SolicitacaoSchema = z.object({
