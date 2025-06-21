@@ -52,7 +52,6 @@ class PaymentController {
         return res.status(400).json({ error: 'payment_id é obrigatório' });
       }
 
-      // Consulta o pagamento diretamente via API REST do Mercado Pago
       const mpResponse = await fetch(`https://api.mercadopago.com/v1/payments/${payment_id}`, {
         headers: {
           Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}`,
