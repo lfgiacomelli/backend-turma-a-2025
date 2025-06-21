@@ -13,6 +13,7 @@ import routesFuncionario from './routes/funcionario_routes.js';
 import loginRoutes from './routes/login_routes.js';
 import routesAnuncio from './routes/anuncio_routes.js';
 import routesAvaliacao from './routes/avaliacao_routes.js';
+import routesPayment from './routes/payment_routes.js';
 
 const server = express();
 
@@ -33,6 +34,7 @@ server.use("/api/funcionarios", routesFuncionario);
 server.use("/api/login", loginRoutes);
 server.use('/api/anuncios', routesAnuncio);
 server.use('/api/avaliacoes', routesAvaliacao);
+server.use('/api/payments', routesPayment)
 
 server.get('/', (req, res) => {
   res.send('Backend server is running!');
