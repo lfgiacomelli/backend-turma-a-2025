@@ -9,6 +9,7 @@ const UsuarioSchema = z.object({
   usu_telefone: z.string().min(1, "Telefone é obrigatório"),
   usu_email: z.string().email("Email inválido").min(1, "Email é obrigatório"),
   usu_senha: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
+  usu_cpf: z.string().length(11, "CPF deve ter 11 dígitos").optional(),
   usu_created_at: z.string().optional(),
   usu_updated_at: z.string().optional(),
 });
@@ -23,6 +24,7 @@ const UsuarioController = {
         usu_ativo,
         usu_email,
         usu_senha,
+        usu_cpf,
         usu_created_at,
         usu_updated_at,
       } = req.body;
@@ -33,6 +35,7 @@ const UsuarioController = {
         usu_ativo,
         usu_email,
         usu_senha,
+        usu_cpf,
         usu_created_at,
         usu_updated_at,
       });
@@ -50,8 +53,8 @@ const UsuarioController = {
 
       const result = await pool.query(
         `INSERT INTO usuarios 
-        (usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_created_at, usu_updated_at)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+        (usu_nome, usu_telefone, usu_ativo, usu_email, usu_senha, usu_cpf, usu_created_at, usu_updated_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING usu_codigo`,
         [
           usu_nome,
@@ -59,6 +62,7 @@ const UsuarioController = {
           usu_ativo,
           usu_email,
           hashedSenha,
+          usu_cpf,
           usu_created_at,
           usu_updated_at,
         ]
@@ -67,7 +71,7 @@ const UsuarioController = {
       const usu_codigo = result.rows[0].usu_codigo;
 
       const usuarioResult = await pool.query(
-        `SELECT usu_codigo, usu_nome, usu_email, usu_telefone, usu_created_at 
+        `SELECT usu_codigo, usu_nome, usu_email, usu_telefone, usu_created_at, usu_cpf
        FROM usuarios WHERE usu_codigo = $1`,
         [usu_codigo]
       );
@@ -86,6 +90,7 @@ const UsuarioController = {
           nome: usuario.usu_nome,
           email: usuario.usu_email,
           telefone: usuario.usu_telefone,
+          cpf: usuario.usu_cpf,
           criado_em: usuario.usu_created_at,
         },
         token: token
@@ -110,7 +115,7 @@ const UsuarioController = {
     try {
       const { id } = req.params;
 
-      const result = await pool.query('SELECT usu_codigo, usu_nome, usu_telefone, usu_email, usu_created_at FROM usuarios WHERE usu_codigo = $1', [id]);
+      const result = await pool.query('SELECT usu_codigo, usu_nome, usu_telefone, usu_email, usu_created_at, usu_cpf FROM usuarios WHERE usu_codigo = $1', [id]);
       if (result.rowCount === 0) {
         return res.status(404).json({ message: "Usuário não encontrado" });
       }
@@ -124,9 +129,9 @@ const UsuarioController = {
   async updateUsuario(req, res) {
     try {
       const { id } = req.params;
-      const { usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha, usu_updated_at } = req.body;
+      const { usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha, usu_cpf, usu_updated_at } = req.body;
 
-      UsuarioSchema.parse({ usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha, usu_updated_at });
+      UsuarioSchema.parse({ usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha, usu_cpf, usu_updated_at });
 
       const query = `
         UPDATE usuarios SET
@@ -134,8 +139,9 @@ const UsuarioController = {
           usu_telefone = $2,
           usu_email = $3,
           usu_senha = $4,
+          usu_cpf = $5,
           usu_updated_at = NOW()
-        WHERE usu_codigo = $5
+        WHERE usu_codigo = $6
       `;
 
       const salt = await bcrypt.genSalt(10);

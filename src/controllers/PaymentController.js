@@ -14,9 +14,9 @@ const payment = new Payment(client);
 class PaymentController {
     static async createPayment(req, res) {
         try {
-            const { sol_valor, usu_nome, usu_codigo, usu_email, sol_descricao, sol_servico } = req.body;
+            const { sol_valor, usu_codigo, usu_nome, usu_cpf, usu_email, sol_descricao, sol_servico } = req.body;
 
-            if (!sol_valor || !usu_nome || !usu_codigo || !usu_email || !sol_descricao || !sol_servico) {
+            if (!sol_valor || !usu_codigo || !usu_nome || !usu_cpf || !usu_email || !sol_descricao || !sol_servico) {
                 return res.status(400).json({ error: 'Parâmetros incompletos' });
             }
 
@@ -30,7 +30,7 @@ class PaymentController {
                     last_name: usu_nome.split(' ').slice(1).join(' ') || '',
                     identification: {
                         type: 'CPF',
-                        number: usu_codigo,
+                        number: usu_cpf,
                     },
                 },
             };
