@@ -178,15 +178,21 @@ const SolicitacaoController = {
     },
     async getSolicitacaoPendente(req, res) {
         try {
-            const result = await pool.query('SELECT * FROM solicitacoes WHERE usu_codigo = $1 AND sol_status = $2 ORDER BY sol_data DESC',
+            const result = await pool.query(
+                'SELECT * FROM solicitacoes WHERE usu_codigo = $1 AND sol_status = $2 ORDER BY sol_data DESC LIMIT 1',
                 [req.params.id, 'Pendente']
             );
-            res.status(200).json(result.rows);
+            if (result.rows.length > 0) {
+                res.status(200).json(result.rows[0]);
+            } else {
+                res.status(404).json({ message: 'Nenhuma solicitação pendente encontrada' });
+            }
         } catch (error) {
-            console.error('Erro ao buscar solicitações pendentes:', error);
+            console.error('Erro ao buscar solicitação pendente:', error);
             res.status(500).json({ message: 'Erro no servidor', detalhe: error.message });
         }
     }
+
 
 
 };
