@@ -1,5 +1,6 @@
 
-import { z } from 'zod'; 
+import { z } from 'zod';
+import pool from '../db/db.js';
 
 const SolicitacaoSchema = z.object({
     sol_origem: z.string(),
@@ -172,6 +173,17 @@ const SolicitacaoController = {
             res.status(200).json(result.rows[0]);
         } catch (error) {
             console.error('Erro ao buscar solicitação:', error);
+            res.status(500).json({ message: 'Erro no servidor', detalhe: error.message });
+        }
+    },
+    async getSolicitacaoPendente(req, res) {
+        try {
+            const result = await pool.query('SELECT * FROM solicitacoes WHERE usu_codigo = $1 AND sol_status = $2 ORDER BY sol_data DESC',
+                [req.params.id, 'Pendente']
+            );
+            res.status(200).json(result.rows);
+        } catch (error) {
+            console.error('Erro ao buscar solicitações pendentes:', error);
             res.status(500).json({ message: 'Erro no servidor', detalhe: error.message });
         }
     }

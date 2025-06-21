@@ -1,5 +1,4 @@
 import express from 'express';
-import { Pool } from 'pg';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
@@ -21,7 +20,6 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    console.log('🔍 Iniciando login para:', usu_email);
 
     const result = await pool.query(
       'SELECT * FROM usuarios WHERE usu_email = $1',
@@ -74,7 +72,6 @@ router.post('/', async (req, res) => {
     });
 
   } catch (err) {
-    console.error('❌ Erro no login:', err);
     res.status(500).json({ sucesso: false, mensagem: 'Erro interno no servidor.', erro: err.message });
   }
 });

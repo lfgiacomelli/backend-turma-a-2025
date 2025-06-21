@@ -8,5 +8,6 @@ router.patch('/:id', authMiddleware, SolicitacaoController.updateSolicitacao);
 router.delete('/:id', authMiddleware, SolicitacaoController.cancelarSolicitacao); 
 router.get('/', authMiddleware, SolicitacaoController.getSolicitacao);
 router.get('/:id', authMiddleware, SolicitacaoController.getSolicitacaoById);
+router.get('/usuario/:id', authMiddleware, SolicitacaoController.getSolicitacaoByUsuarioId);
 
 export default router;
