@@ -4,7 +4,7 @@ dotenv.config();
 
 
 const pool = new Pool({
-  user: process.env.DB_USER,
+  user: process.env.USER_DB,
   host: process.env.HOST_DB,
   database: process.env.DATABASE,
   password: process.env.PASSWORD, 
