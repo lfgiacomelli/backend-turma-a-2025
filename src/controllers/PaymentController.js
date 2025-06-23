@@ -3,19 +3,31 @@ import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 import { v4 as uuidv4 } from 'uuid';
 import pool from '../db/db.js';
-dotenv.config();
 
+dotenv.config();
 
 class PaymentController {
     static async createPayment(req, res) {
         try {
             const {
-                sol_valor, usu_codigo, usu_nome, usu_cpf,
-                usu_email, sol_descricao, sol_servico,
+                sol_valor,
+                usu_codigo,
+                usu_nome,
+                usu_cpf,
+                usu_email,
+                sol_descricao,
+                sol_servico,
             } = req.body;
 
-            if (!sol_valor || !usu_codigo || !usu_nome || !usu_cpf ||
-                !usu_email || !sol_descricao || !sol_servico) {
+            if (
+                !sol_valor ||
+                !usu_codigo ||
+                !usu_nome ||
+                !usu_cpf ||
+                !usu_email ||
+                !sol_descricao ||
+                !sol_servico
+            ) {
                 return res.status(400).json({ error: 'Parâmetros incompletos' });
             }
 
@@ -43,30 +55,41 @@ class PaymentController {
                 },
             };
 
-            const { body } = await payment.create({ body: mpBody });
+            const response = await payment.create({ body: mpBody });
+
+            const paymentData = response.body ?? response;
+
+            if (!paymentData || !paymentData.id) {
+                console.error('Resposta inválida do MercadoPago:', paymentData);
+                return res
+                    .status(500)
+                    .json({ error: 'Erro na resposta do MercadoPago', details: paymentData });
+            }
 
             await pool.query(
                 `INSERT INTO pix_pagamentos (
-           pix_pagamento_codigo, pix_status, pix_valor,
-           pix_qrcode, pix_qrcode_base64, pix_ticket_url,
-           usu_codigo, sol_servico
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
+          pix_pagamento_codigo, pix_status, pix_valor,
+          pix_qrcode, pix_qrcode_base64, pix_ticket_url,
+          usu_codigo, sol_servico
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
                 [
-                    body.id,
-                    body.status,
+                    paymentData.id,
+                    paymentData.status,
                     sol_valor,
-                    body.point_of_interaction.transaction_data?.qr_code ?? null,
-                    body.point_of_interaction.transaction_data?.qr_code_base64 ?? null,
-                    body.point_of_interaction.transaction_data?.ticket_url ?? null,
+                    paymentData.point_of_interaction?.transaction_data?.qr_code ?? null,
+                    paymentData.point_of_interaction?.transaction_data?.qr_code_base64 ?? null,
+                    paymentData.point_of_interaction?.transaction_data?.ticket_url ?? null,
                     usu_codigo,
                     sol_servico,
-                ],
+                ]
             );
 
-            return res.status(200).json(body);
+            return res.status(200).json(paymentData);
         } catch (error) {
             console.error('Erro ao criar pagamento:', error);
-            return res.status(500).json({ error: 'Erro ao criar pagamento', details: error.message });
+            return res
+                .status(500)
+                .json({ error: 'Erro ao criar pagamento', details: error.message });
         }
     }
 
@@ -91,19 +114,19 @@ class PaymentController {
 
             await pool.query(
                 `UPDATE pix_pagamentos
-            SET pix_status=$1,
-                pix_qrcode=$2,
-                pix_qrcode_base64=$3,
-                pix_ticket_url=$4,
-                pix_atualizado_em=NOW()
-          WHERE pix_pagamento_codigo=$5`,
+           SET pix_status=$1,
+               pix_qrcode=$2,
+               pix_qrcode_base64=$3,
+               pix_ticket_url=$4,
+               pix_atualizado_em=NOW()
+         WHERE pix_pagamento_codigo=$5`,
                 [
                     data.status,
                     data.point_of_interaction?.transaction_data?.qr_code ?? null,
                     data.point_of_interaction?.transaction_data?.qr_code_base64 ?? null,
                     data.point_of_interaction?.transaction_data?.ticket_url ?? null,
                     payment_id,
-                ],
+                ]
             );
 
             return res.status(200).json({
@@ -119,7 +142,36 @@ class PaymentController {
             });
         } catch (error) {
             console.error('Erro ao consultar status do pagamento:', error);
-            return res.status(500).json({ error: 'Erro ao consultar status do pagamento', details: error.message });
+            return res
+                .status(500)
+                .json({ error: 'Erro ao consultar status do pagamento', details: error.message });
+        }
+    }
+
+    static async getPaymentByUser(req, res) {
+        try {
+            const { usu_codigo } = req.params;
+
+            if (!usu_codigo) {
+                return res.status(400).json({ error: 'usu_codigo é obrigatório' });
+            }
+
+            const result = await pool.query(
+                `SELECT * FROM pix_pagamentos WHERE usu_codigo = $1 AND pix_status != 'pending' ORDER BY pix_pagamento_codigo DESC`,
+                [usu_codigo]
+            );
+
+
+            if (result.rowCount === 0) {
+                return res.status(404).json({ message: 'Nenhum pagamento finalizado encontrado para este usuário' });
+            }
+
+            return res.status(200).json(result.rows);
+        } catch (error) {
+            console.error('Erro ao buscar pagamentos do usuário:', error);
+            return res
+                .status(500)
+                .json({ error: 'Erro ao buscar pagamentos do usuário', details: error.message });
         }
     }
 }

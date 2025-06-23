@@ -6,5 +6,6 @@ const router = express.Router();
 
 router.post('/create-payment', authMiddleware, PaymentController.createPayment);
 router.get('/status/:payment_id', authMiddleware, PaymentController.getPaymentStatus);
+router.get('/get-payments/:usu_codigo', authMiddleware, PaymentController.getPaymentByUser);
 
 export default router;
