@@ -1,10 +1,13 @@
 import { Pool } from 'pg';
+import dotenv from 'dotenv';
+dotenv.config();
+
 
 const pool = new Pool({
-  user: 'giacomelli_devs',
-  host: 'dpg-d18bupggjchc73ep07vg-a.oregon-postgres.render.com',
-  database: 'zoomx_tcc_fx7z',
-  password: 'NyO6nehZ5tWBFopexVOJrpvCalF0y2ZS', 
+  user: process.env.DB_USER,
+  host: process.env.HOST_DB,
+  database: process.env.DATABASE,
+  password: process.env.PASSWORD, 
   port: 5432,
   ssl: {
     rejectUnauthorized: false, 
