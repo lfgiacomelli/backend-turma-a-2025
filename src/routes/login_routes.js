@@ -67,6 +67,7 @@ router.post('/', async (req, res) => {
         nome: usuario.usu_nome,
         email: usuario.usu_email,
         telefone: usuario.usu_telefone,
+        cpf: usuario.usu_cpf,
         criado_em: usuario.usu_created_at,
       },
     });
