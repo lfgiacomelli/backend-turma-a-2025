@@ -1,11 +1,14 @@
 import { MercadoPagoConfig, Payment } from 'mercadopago';
-import fetch from 'node-fetch'; // Se Node >=18, pode usar fetch global e remover esta linha
+import fetch from 'node-fetch'; 
+import dotenv from 'dotenv';
+dotenv.config();
+
 
 const client = new MercadoPagoConfig({
     accessToken: process.env.MP_ACCESS_TOKEN,
     options: {
         timeout: 5000,
-        idempotencyKey: 'abc', // ideal seria gerar dinamicamente para evitar duplicidade
+        idempotencyKey: 'abc',
     }
 });
 
@@ -15,7 +18,6 @@ class PaymentController {
     static async createPayment(req, res) {
         try {
             const { sol_valor, usu_codigo, usu_nome, usu_cpf, usu_email, sol_descricao, sol_servico } = req.body;
-
             if (!sol_valor || !usu_codigo || !usu_nome || !usu_cpf || !usu_email || !sol_descricao || !sol_servico) {
                 return res.status(400).json({ error: 'Parâmetros incompletos' });
             }
