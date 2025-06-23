@@ -129,9 +129,9 @@ const UsuarioController = {
   async updateUsuario(req, res) {
     try {
       const { id } = req.params;
-      const { usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha, usu_cpf, usu_updated_at } = req.body;
+      const { usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha, usu_updated_at } = req.body;
 
-      UsuarioSchema.parse({ usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha, usu_cpf, usu_updated_at });
+      UsuarioSchema.parse({ usu_codigo, usu_nome, usu_telefone, usu_email, usu_senha, usu_updated_at });
 
       const query = `
         UPDATE usuarios SET
@@ -139,9 +139,8 @@ const UsuarioController = {
           usu_telefone = $2,
           usu_email = $3,
           usu_senha = $4,
-          usu_cpf = $5,
           usu_updated_at = NOW()
-        WHERE usu_codigo = $6
+        WHERE usu_codigo = $5
       `;
 
       const salt = await bcrypt.genSalt(10);
