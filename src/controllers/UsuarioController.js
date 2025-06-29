@@ -248,6 +248,36 @@ const UsuarioController = {
       res.status(500).json({ message: error.message });
     }
   },
+  async verificarBanimento(req, res) {
+    try {
+      const { id } = req.params;
+
+      const result = await pool.query(
+        'SELECT usu_ativo FROM usuarios WHERE usu_codigo = $1',
+        [id]
+      );
+
+      if (result.rowCount === 0) {
+        return res.status(404).json({ sucesso: false, mensagem: "Usuário não encontrado." });
+      }
+
+      const { usu_ativo } = result.rows[0];
+
+      if (!usu_ativo) {
+        return res.status(401).json({
+          sucesso: false,
+          mensagem: "Usuário desativado. Faça login novamente para validar sua conta.",
+          banido: true,
+        });
+      }
+
+      return res.status(200).json({ sucesso: true, ativo: true });
+    } catch (erro) {
+      console.error("Erro ao verificar banimento:", erro);
+      return res.status(500).json({ sucesso: false, mensagem: "Erro no servidor." });
+    }
+  }
+
 };
 
 export default UsuarioController;
