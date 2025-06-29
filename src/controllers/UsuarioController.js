@@ -253,7 +253,7 @@ const UsuarioController = {
       const { id } = req.params;
 
       const result = await pool.query(
-        'SELECT usu_ativo FROM usuarios WHERE usu_codigo = $1',
+        'SELECT usu_ativo, usu_email FROM usuarios WHERE usu_codigo = $1',
         [id]
       );
 
@@ -270,7 +270,22 @@ const UsuarioController = {
           banido: true,
         });
       }
-
+      await enviarEmail({
+        to: result.rows[0].usu_email,
+        subject: 'Aviso de banimento',
+        text: `Infelizmente sua atividade dentro de nossa plataforma não está de acordo com nossos termos de uso.
+        Por isso, sua conta foi desativada. Se você acredita que isso foi um engano, entre em contato com nosso suporte.
+        Atenciosamente,
+        Equipe ZoomX - Mototáxi e Entregas Rápidas
+        
+        Este é um email automático, por favor não responda.`,
+        html: `<p>Infelizmente sua atividade dentro de nossa plataforma não está de acordo com nossos termos de uso.</p>
+        <p>Por isso, sua conta foi desativada. Se você acredita que isso foi um engano, entre em contato com nosso suporte.</p>
+        <p>Atenciosamente,</p>
+        <p>Equipe ZoomX - Mototáxi e Entregas Rápidas</p>
+        <p><em>Este é um email automático, por favor não responda.</em></p>
+        `
+      })
       return res.status(200).json({ sucesso: true, ativo: true });
     } catch (erro) {
       console.error("Erro ao verificar banimento:", erro);
