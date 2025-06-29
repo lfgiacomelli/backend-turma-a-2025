@@ -2,18 +2,17 @@ import { z } from 'zod';
 import pool from '../db/db.js';
 import { enviarEmail } from '../utils/email.js';
 
-// Ajuste do enum para incluir 'finalizada' que você usa na query
 const ViagemSchema = z.object({
     via_codigo: z.string().uuid({ message: "Código da viagem inválido" }),
     via_funcionarioId: z.string().uuid({ message: "ID do funcionário inválido" }),
     via_origem: z.string().min(1, "Origem é obrigatória"),
     via_destino: z.string().min(1, "Destino é obrigatório"),
     via_atendenteCodigo: z.string().uuid({ message: "Código do atendente inválido" }).optional(),
-    usu_codigo: z.string().uuid({ message: "ID do usuário inválido" }).optional(), // corrigido nome para usu_codigo
+    usu_codigo: z.string().uuid({ message: "ID do usuário inválido" }).optional(), 
     via_formapagamento: z.string().min(1, "Forma de pagamento é obrigatória").optional(),
     via_observacoes: z.string().max(500, "Observações não podem exceder 500 caracteres").optional(),
     via_servico: z.string().min(1, "Serviço é obrigatório"),
-    via_status: z.enum(['Pendente', 'Aprovada', 'Rejeitada', 'finalizada']), // incluído 'finalizada'
+    via_status: z.enum(['Pendente', 'Aprovada', 'Rejeitada', 'finalizada']), 
     via_data: z.preprocess(arg => {
         if (typeof arg === 'string' || arg instanceof Date) return new Date(arg);
         return arg;
@@ -111,7 +110,6 @@ const ViagemController = {
         }
 
         try {
-            // Busca última viagem finalizada sem avaliação e que ainda não teve email enviado
             const result = await pool.query(
                 `SELECT v.via_codigo, v.via_data, v.via_status, u.usu_nome, u.usu_email
        FROM viagens v
@@ -135,7 +133,6 @@ const ViagemController = {
 
             const viagem = result.rows[0];
 
-            // Envia o email
             await enviarEmail({
                 to: viagem.usu_email,
                 subject: 'Ajude-nos a melhorar: Avalie sua última viagem no ZoomX!',
