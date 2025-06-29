@@ -68,7 +68,7 @@ const ViagemController = {
 
             const funcionarioResult = await pool.query(
                 `SELECT 
-           f.fun_nome, 
+           f.fun_nome, f.fun_telefone,
            m.mot_modelo, 
            m.mot_placa
          FROM funcionarios f
