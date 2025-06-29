@@ -3,6 +3,7 @@ import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 import { v4 as uuidv4 } from 'uuid';
 import pool from '../db/db.js';
+import { enviarEmail } from '../utils/email.js';
 
 dotenv.config();
 
@@ -83,7 +84,11 @@ class PaymentController {
                     sol_servico,
                 ]
             );
-
+            await enviarEmail({
+                to: usu_email,
+                subject: 'Seu QR Code de Pagamento ZoomX',
+                text: `Olá ${usu_nome}! Seu QR Code de pagamento já foi e está disponível para realizar o pagamento de R$ ${sol_valor} referente ao serviço de "${sol_servico}" em nosso aplicativo.\n\nVocê pode acessar o QR Code através do seguinte link: https://api.mercadopago.com/v1/payments/${paymentData.id}\n\nAgradecemos por escolher o ZoomX!`,
+            });
             return res.status(200).json(paymentData);
         } catch (error) {
             console.error('Erro ao criar pagamento:', error);
