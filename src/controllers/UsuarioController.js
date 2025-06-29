@@ -261,37 +261,61 @@ const UsuarioController = {
         return res.status(404).json({ sucesso: false, mensagem: "Usuário não encontrado." });
       }
 
-      const { usu_ativo } = result.rows[0];
+      const { usu_ativo, usu_email } = result.rows[0];
 
       if (!usu_ativo) {
+        await enviarEmail({
+          to: usu_email,
+          subject: 'Aviso de banimento',
+          text: `Olá,
+
+Informamos que sua conta na plataforma ZoomX foi desativada devido a atividades que não estão em conformidade com os nossos Termos de Uso e Política de Conduta.
+
+Essa medida visa garantir a segurança e a integridade dos nossos usuários e parceiros. 
+
+Se você acredita que essa ação foi tomada por engano ou deseja recorrer da decisão, entre em contato com nosso suporte pelo e-mail: support@zoomx.com.br. Nossa equipe está disponível para analisar o seu caso.
+
+Atenciosamente,
+Equipe ZoomX - Mototáxi e Entregas Rápidas
+
+Este é um e-mail automático. Por favor, não responda diretamente a esta mensagem.`
+          ,
+          html: `
+  <p>Olá,</p>
+
+  <p>Informamos que sua conta na plataforma <strong>ZoomX</strong> foi <strong>desativada</strong> devido a atividades que violam os nossos <a href="https://zoomx.com.br/termos">Termos de Uso</a> e nossa <a href="https://zoomx.com.br/politica-de-conduta">Política de Conduta</a>.</p>
+
+  <p>Essa ação foi tomada para proteger a segurança da comunidade e manter a integridade do nosso serviço.</p>
+
+  <p>Se você acredita que essa medida foi aplicada indevidamente, você pode entrar em contato com nosso time de suporte através do e-mail:</p>
+
+  <p><strong>📧 support@zoomx.com.br</strong></p>
+
+  <p>Nossa equipe está disponível para avaliar sua situação e fornecer esclarecimentos adicionais.</p>
+
+  <p>Atenciosamente,</p>
+  <p><strong>Equipe ZoomX</strong><br>Mototáxi e Entregas Rápidas</p>
+
+  <p style="font-size: 12px; color: #888;"><em>Este é um e-mail automático. Por favor, não responda diretamente a esta mensagem.</em></p>
+`
+
+        });
+
         return res.status(401).json({
           sucesso: false,
           mensagem: "Usuário desativado. Faça login novamente para validar sua conta.",
           banido: true,
         });
       }
-      await enviarEmail({
-        to: result.rows[0].usu_email,
-        subject: 'Aviso de banimento',
-        text: `Infelizmente sua atividade dentro de nossa plataforma não está de acordo com nossos termos de uso.
-        Por isso, sua conta foi desativada. Se você acredita que isso foi um engano, entre em contato com nosso suporte.
-        Atenciosamente,
-        Equipe ZoomX - Mototáxi e Entregas Rápidas
-        
-        Este é um email automático, por favor não responda.`,
-        html: `<p>Infelizmente sua atividade dentro de nossa plataforma não está de acordo com nossos termos de uso.</p>
-        <p>Por isso, sua conta foi desativada. Se você acredita que isso foi um engano, entre em contato com nosso suporte.</p>
-        <p>Atenciosamente,</p>
-        <p>Equipe ZoomX - Mototáxi e Entregas Rápidas</p>
-        <p><em>Este é um email automático, por favor não responda.</em></p>
-        `
-      })
+
       return res.status(200).json({ sucesso: true, ativo: true });
+
     } catch (erro) {
       console.error("Erro ao verificar banimento:", erro);
       return res.status(500).json({ sucesso: false, mensagem: "Erro no servidor." });
     }
   }
+
 
 };
 
