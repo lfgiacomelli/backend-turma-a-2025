@@ -4,8 +4,6 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 
-
-
 import routesUsuario from './routes/usuario_routes.js';
 import routesSolicitacao from './routes/solicitacoes_routes.js';
 import routesViagem from './routes/viagem_routes.js';
@@ -34,7 +32,7 @@ server.use("/api/funcionarios", routesFuncionario);
 server.use("/api/login", loginRoutes);
 server.use('/api/anuncios', routesAnuncio);
 server.use('/api/avaliacoes', routesAvaliacao);
-server.use('/api/payments', routesPayment)
+server.use('/api/payments', routesPayment);
 
 server.get('/', (req, res) => {
   res.send('Backend server is running!');

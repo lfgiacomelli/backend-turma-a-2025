@@ -1,17 +1,19 @@
 import { z } from 'zod';
 import pool from '../db/db.js';
+import { enviarEmail } from '../utils/email.js';
 
+// Ajuste do enum para incluir 'finalizada' que você usa na query
 const ViagemSchema = z.object({
     via_codigo: z.string().uuid({ message: "Código da viagem inválido" }),
     via_funcionarioId: z.string().uuid({ message: "ID do funcionário inválido" }),
     via_origem: z.string().min(1, "Origem é obrigatória"),
-    via_destino: z.string().min(1, "Destino é obrigatória"),
+    via_destino: z.string().min(1, "Destino é obrigatório"),
     via_atendenteCodigo: z.string().uuid({ message: "Código do atendente inválido" }).optional(),
-    via_usuarioId: z.string().uuid({ message: "ID do usuário inválido" }).optional(),
+    usu_codigo: z.string().uuid({ message: "ID do usuário inválido" }).optional(), // corrigido nome para usu_codigo
     via_formapagamento: z.string().min(1, "Forma de pagamento é obrigatória").optional(),
     via_observacoes: z.string().max(500, "Observações não podem exceder 500 caracteres").optional(),
     via_servico: z.string().min(1, "Serviço é obrigatório"),
-    via_status: z.enum(['Pendente', 'Aprovada', 'Rejeitada']),
+    via_status: z.enum(['Pendente', 'Aprovada', 'Rejeitada', 'finalizada']), // incluído 'finalizada'
     via_data: z.preprocess(arg => {
         if (typeof arg === 'string' || arg instanceof Date) return new Date(arg);
         return arg;
@@ -39,6 +41,7 @@ const ViagemController = {
             return res.status(500).json({ sucesso: false, mensagem: 'Erro interno no servidor.', detalhes: error.message });
         }
     },
+
     async getFuncionarioPorViagem(req, res) {
         const { solicitacaoId } = req.params;
 
@@ -66,12 +69,12 @@ const ViagemController = {
 
             const funcionarioResult = await pool.query(
                 `SELECT 
-                f.fun_nome, 
-                m.mot_modelo, 
-                m.mot_placa
-             FROM funcionarios f
-             JOIN motocicletas m ON f.fun_codigo = m.fun_codigo
-             WHERE f.fun_codigo = $1`,
+           f.fun_nome, 
+           m.mot_modelo, 
+           m.mot_placa
+         FROM funcionarios f
+         JOIN motocicletas m ON f.fun_codigo = m.fun_codigo
+         WHERE f.fun_codigo = $1`,
                 [fun_codigo]
             );
 
@@ -96,6 +99,7 @@ const ViagemController = {
             });
         }
     },
+
     async getUltimaViagemNaoAvaliada(req, res) {
         const { id } = req.params;
 
@@ -107,28 +111,74 @@ const ViagemController = {
         }
 
         try {
+            // Busca última viagem finalizada sem avaliação e que ainda não teve email enviado
             const result = await pool.query(
-                `SELECT v.via_codigo, v.via_data, v.via_status
-             FROM viagens v
-             LEFT JOIN avaliacoes a ON a.via_codigo = v.via_codigo
-             WHERE v.usu_codigo = $1
-               AND v.via_status = 'finalizada'
-               AND a.via_codigo IS NULL
-             ORDER BY v.via_data DESC
-             LIMIT 1`,
+                `SELECT v.via_codigo, v.via_data, v.via_status, u.usu_nome, u.usu_email
+       FROM viagens v
+       JOIN usuarios u ON v.usu_codigo = u.usu_codigo
+       LEFT JOIN avaliacoes a ON a.via_codigo = v.via_codigo
+       WHERE v.usu_codigo = $1
+         AND v.via_status = 'finalizada'
+         AND a.via_codigo IS NULL
+         AND (v.via_email_enviado IS NULL OR v.via_email_enviado = FALSE)
+       ORDER BY v.via_data DESC
+       LIMIT 1`,
                 [id]
             );
 
             if (result.rows.length === 0) {
                 return res.status(404).json({
                     sucesso: false,
-                    mensagem: 'Nenhuma viagem finalizada sem avaliação encontrada para este usuário.'
+                    mensagem: 'Nenhuma viagem finalizada sem avaliação encontrada para este usuário ou email já enviado.'
                 });
             }
 
+            const viagem = result.rows[0];
+
+            // Envia o email
+            await enviarEmail({
+                to: viagem.usu_email,
+                subject: 'Ajude-nos a melhorar: Avalie sua última viagem no ZoomX!',
+                text: `
+Olá, ${viagem.usu_nome}!
+
+Esperamos que sua experiência com o ZoomX tenha sido excelente.
+
+Para continuarmos oferecendo um serviço de qualidade, gostaríamos de ouvir sua opinião sobre a sua última viagem.
+
+Basta abrir o app e avaliar — um pop-up estará disponível na tela inicial para facilitar o processo.
+
+Sua avaliação faz toda a diferença para que possamos melhorar cada vez mais.
+
+Obrigado por escolher o ZoomX!
+
+Atenciosamente,
+Equipe ZoomX - Mototáxi e Entregas Rápidas
+      `,
+                html: `
+<p>Olá, <strong>${viagem.usu_nome}</strong>!</p>
+<p>Esperamos que sua experiência com o <strong>ZoomX</strong> tenha sido excelente.</p>
+<p>Para continuarmos oferecendo um serviço de qualidade, gostaríamos de ouvir sua opinião sobre a sua última viagem.</p>
+<p>
+  <a href="zoomx://avaliar" style="display:inline-block; padding:10px 20px; background:#007bff; color:#fff; text-decoration:none; border-radius:5px;">
+    Avaliar agora
+  </a>
+</p>
+<p>Ao abrir o app, você verá um pop-up na tela inicial para facilitar sua avaliação.</p>
+<p>Sua opinião faz toda a diferença para que possamos melhorar cada vez mais.</p>
+<p>Obrigado por escolher o ZoomX!</p>
+<p><em>Equipe ZoomX - Mototáxi e Entregas Rápidas</em></p>
+      `
+            });
+
+            await pool.query(
+                `UPDATE viagens SET via_email_enviado = TRUE WHERE via_codigo = $1`,
+                [viagem.via_codigo]
+            );
+
             return res.json({
                 sucesso: true,
-                viagem: result.rows[0]
+                viagem
             });
 
         } catch (error) {
@@ -140,6 +190,7 @@ const ViagemController = {
             });
         }
     },
+
     async verificarUltimaViagem(req, res) {
         const { id } = req.params;
 
@@ -151,7 +202,13 @@ const ViagemController = {
         }
 
         try {
-            const result = await pool.query(`SELECT v.*, s.sol_distancia FROM viagens v JOIN solicitacoes s ON v.sol_codigo = s.sol_codigo WHERE v.usu_codigo = $1 ORDER BY v.via_data DESC LIMIT 1`,
+            const result = await pool.query(
+                `SELECT v.*, s.sol_distancia 
+         FROM viagens v 
+         JOIN solicitacoes s ON v.sol_codigo = s.sol_codigo 
+         WHERE v.usu_codigo = $1 
+         ORDER BY v.via_data DESC 
+         LIMIT 1`,
                 [id]
             );
 
@@ -165,8 +222,7 @@ const ViagemController = {
             const viagem = result.rows[0];
             return res.json({
                 sucesso: true,
-                viagem: viagem
-
+                viagem
             });
 
         } catch (error) {
@@ -178,6 +234,7 @@ const ViagemController = {
             });
         }
     },
+
     async getViagemById(req, res) {
         const { id } = req.params;
 
@@ -196,15 +253,12 @@ const ViagemController = {
             }
 
             return res.json(result.rows[0]);
+
         } catch (error) {
             console.error('Erro ao buscar viagem:', error);
             return res.status(500).json({ sucesso: false, mensagem: 'Erro interno no servidor.', detalhes: error.message });
         }
     },
-    
-
-
-
 };
 
 export default ViagemController;
