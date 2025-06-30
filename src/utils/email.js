@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 
 export async function enviarEmail({ to, subject, text }) {
   await transporter.sendMail({
-    from: `ZoomX - Mototáxi e entregas rápidas <${process.env.EMAIL_USER}>`,
+    from: `ZoomX - Mototáxis <${process.env.EMAIL_USER}>`,
     to,
     subject,
     text,
