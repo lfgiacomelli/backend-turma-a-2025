@@ -21,7 +21,6 @@ router.post('/', async (req, res) => {
   }
 
   try {
-
     const result = await pool.query(
       'SELECT * FROM usuarios WHERE usu_email = $1',
       [usu_email]
@@ -33,9 +32,10 @@ router.post('/', async (req, res) => {
 
     const usuario = result.rows[0];
 
-    if (!usuario.usu_ativo) {
-      return res.status(403).json({ sucesso: false, mensagem: 'Usuário banido ou inativo.' });
-    }
+    // Removida a verificação de usuário ativo (banimento)
+    // if (!usuario.usu_ativo) {
+    //   return res.status(403).json({ sucesso: false, mensagem: 'Usuário banido ou inativo.' });
+    // }
 
     let hash = usuario.usu_senha;
 
@@ -58,6 +58,7 @@ router.post('/', async (req, res) => {
       JWT_SECRET,
       { expiresIn: '45d' }
     );
+
     await enviarEmail({
       to: usuario.usu_email,
       subject: 'Novo login detectado na sua conta ZoomX',
@@ -79,7 +80,6 @@ Um abraço,
 Equipe ZoomX - Mototáxi e Entregas Rápidas
 `,
     });
-
 
     res.json({
       sucesso: true,
