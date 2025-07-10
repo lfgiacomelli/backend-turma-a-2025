@@ -10,7 +10,7 @@ router.patch('/:id', authMiddleware, AvaliacaoController.updateAvaliacao);
 
 router.delete('/:id', authMiddleware, AvaliacaoController.deleteAvaliacao);
 
-router.get('/', authMiddleware, AvaliacaoController.getAvaliacoes);
+router.get('/', AvaliacaoController.getAvaliacoes);
 
 router.get('/usuario/:id', authMiddleware, AvaliacaoController.getAvaliacoesByUsuario);
 

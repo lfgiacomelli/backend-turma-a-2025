@@ -12,6 +12,17 @@ import loginRoutes from './routes/login_routes.js';
 import routesAnuncio from './routes/anuncio_routes.js';
 import routesAvaliacao from './routes/avaliacao_routes.js';
 import routesPayment from './routes/payment_routes.js';
+import routesAddress from './routes/address_routes.js';
+
+import routesAdminMotocicleta from './routes/AdminRoutes/motocicleta_routes.js';
+import routesAdminUsuario from './routes/AdminRoutes/usuario_routes.js';
+import routesAdminSolicitacao from './routes/AdminRoutes/solicitacao_routes.js';
+import routesAdminViagem from './routes/AdminRoutes/viagem_routes.js';
+import routesAdminAnuncio from './routes/AdminRoutes/anuncio_routes.js';
+import routesAdminFuncionario from './routes/AdminRoutes/funcionario_routes.js';
+import routesAdminRelatorio from './routes/AdminRoutes/relatorio_routes.js';
+import loginFuncionarioRoutes from './routes/AdminRoutes/login_routes.js';
+
 
 const server = express();
 
@@ -33,6 +44,16 @@ server.use("/api/login", loginRoutes);
 server.use('/api/anuncios', routesAnuncio);
 server.use('/api/avaliacoes', routesAvaliacao);
 server.use('/api/payments', routesPayment);
+server.use('/api/enderecos', routesAddress);
+
+server.use('/api/admin/usuarios', routesAdminUsuario);
+server.use('/api/admin/solicitacoes', routesAdminSolicitacao);
+server.use('/api/admin/viagens', routesAdminViagem);
+server.use('/api/admin/anuncios', routesAdminAnuncio);
+server.use('/api/admin/funcionarios', routesAdminFuncionario);
+server.use('/api/admin/motocicletas', routesAdminMotocicleta);
+server.use('/api/admin/relatorios', routesAdminRelatorio);
+server.use('/api/admin/login', loginFuncionarioRoutes);
 
 server.get('/', (req, res) => {
   res.send('Backend server is running!');

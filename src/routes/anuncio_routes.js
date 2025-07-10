@@ -1,6 +1,7 @@
 import express from 'express';
-const router = express.Router();
 import AnuncioController from '../controllers/AnuncioController.js';
+
+const router = express.Router();
 
 router.get('/', AnuncioController.listarTodos);
 

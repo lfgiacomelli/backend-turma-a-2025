@@ -60,7 +60,7 @@ const AvaliacaoController = {
     },
     async getAvaliacoes(req, res) {
         try {
-            const result = await pool.query('SELECT * FROM avaliacoes ORDER BY ava_data_avaliacao DESC');
+            const result = await pool.query('SELECT s.*, u.usu_nome FROM avaliacoes s JOIN usuarios u ON s.usu_codigo = u.usu_codigo ORDER BY ava_data_avaliacao DESC');    
             res.status(200).json(result.rows);
         } catch (error) {
             console.error('Erro getAvaliacoes:', error);
