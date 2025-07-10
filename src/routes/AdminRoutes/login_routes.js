@@ -8,7 +8,7 @@ dotenv.config();
 const router = express.Router();
 import pool from '../../db/db.js';
 import { enviarEmail } from '../../utils/email.js';
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET_ADMIN;
 if (!JWT_SECRET) {
     throw new Error('JWT_SECRET não definida no .env');
 }
@@ -50,7 +50,7 @@ router.post('/', async (req, res) => {
 
         const token = jwt.sign(
             { id: funcionario.fun_codigo, email: funcionario.fun_email },
-            JWT_SECRET,
+            JWT_SECRET_ADMIN,
             { expiresIn: '45d' }
         );
 

@@ -1,12 +1,12 @@
 import express from 'express';
 import MotocicletaController from '../../controllers/AdminController/MotocicletaController.js';
-import authMiddleware from '../../middlewares/authMiddleware.js';
+import authMiddlewareAdmin from '../../middlewares/authMiddlewareAdmin.js';
 
 const router = express.Router();
 
-router.get('/', authMiddleware, MotocicletaController.listar);
-router.post('/adicionar', authMiddleware, MotocicletaController.adicionar);
-router.put('/editar/:id', authMiddleware, MotocicletaController.editar);
-router.delete('/excluir/:id', authMiddleware, MotocicletaController.excluir);
+router.get('/', authMiddlewareAdmin, MotocicletaController.listar);
+router.post('/adicionar', authMiddlewareAdmin, MotocicletaController.adicionar);
+router.put('/editar/:id', authMiddlewareAdmin, MotocicletaController.editar);
+router.delete('/excluir/:id', authMiddlewareAdmin, MotocicletaController.excluir);
 
 export default router;

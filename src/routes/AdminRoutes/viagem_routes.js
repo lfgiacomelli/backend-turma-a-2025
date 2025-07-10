@@ -1,14 +1,14 @@
 import express from 'express';
 import ViagemController from '../../controllers/AdminController/ViagemController.js';
-import authMiddleware from '../../middlewares/authMiddleware.js';
+import authMiddlewareAdmin from '../../middlewares/authMiddlewareAdmin.js';
 
 const router = express.Router();
 
-router.get('/', authMiddleware, ViagemController.listar);
-router.get('/finalizadas', authMiddleware, ViagemController.contadorDeViagens);
-router.get('/pendentes', authMiddleware, ViagemController.listarEmAndamento);
-router.get('/:id', authMiddleware, ViagemController.detalhes);
-router.post('/finalizar/:id', authMiddleware, ViagemController.finalizar);
-router.post('/finalizar-todas', authMiddleware, ViagemController.finalizarTodas);
+router.get('/', authMiddlewareAdmin, ViagemController.listar);
+router.get('/finalizadas', authMiddlewareAdmin, ViagemController.contadorDeViagens);
+router.get('/pendentes', authMiddlewareAdmin, ViagemController.listarEmAndamento);
+router.get('/:id', authMiddlewareAdmin, ViagemController.detalhes);
+router.post('/finalizar/:id', authMiddlewareAdmin, ViagemController.finalizar);
+router.post('/finalizar-todas', authMiddlewareAdmin, ViagemController.finalizarTodas);
 
 export default router;

@@ -39,13 +39,13 @@ const AddressController = {
                 end_bairro,
                 end_cep
             } = req.body;
-            
+
             AddressSchema.parse({ usu_codigo, end_apelido, end_logradouro, end_numero, end_bairro, end_cep });
-            
+
             await pool.query(`INSERT INTO enderecos(usu_codigo, end_apelido, end_logradouro, end_numero, end_bairro, end_cep) VALUES ($1, $2, $3, $4, $5, $6)`, [usu_codigo, end_apelido, end_logradouro, end_numero, end_bairro, end_cep || null]);
-            
+
             return res.status(201).json({ message: "Endereço adicionado com sucesso!" });
-        
+
         } catch (error) {
             if (error instanceof z.ZodError) {
                 return res.status(400).json({

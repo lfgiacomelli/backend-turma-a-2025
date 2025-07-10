@@ -1,12 +1,12 @@
 import express from 'express';
 import SolicitacaoController from '../../controllers/AdminController/SolicitacaoController.js';
-import authMiddleware from '../../middlewares/authMiddleware.js';
+import authMiddlewareAdmin from '../../middlewares/authMiddlewareAdmin.js';
 
 const router = express.Router();
 
-router.get('/', authMiddleware, SolicitacaoController.listar);
-router.get('/pendentes', authMiddleware, SolicitacaoController.listarPendentes);
-router.post('/aceitar/:id', authMiddleware, SolicitacaoController.aceitar);
-router.post('/recusar/:id', authMiddleware, SolicitacaoController.recusar);
+router.get('/', authMiddlewareAdmin, SolicitacaoController.listar);
+router.get('/pendentes', authMiddlewareAdmin, SolicitacaoController.listarPendentes);
+router.post('/aceitar/:id', authMiddlewareAdmin, SolicitacaoController.aceitar);
+router.post('/recusar/:id', authMiddlewareAdmin, SolicitacaoController.recusar);
 
 export default router;

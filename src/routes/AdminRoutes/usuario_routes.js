@@ -1,12 +1,12 @@
 import express from 'express';
 import UsuarioController from '../../controllers/AdminController/UsuarioController.js';
-import authMiddleware from '../../middlewares/authMiddleware.js';
+import authMiddlewareAdmin from '../../middlewares/authMiddlewareAdmin.js';
 
 const router = express.Router();
 
-router.get('/', authMiddleware, UsuarioController.listar);
-router.put('/admin-editar', authMiddleware, UsuarioController.adminEditar);
-router.put('/status/:id', authMiddleware, UsuarioController.alternarStatus);
-router.delete('/excluir/:id', authMiddleware, UsuarioController.excluir);
+router.get('/', authMiddlewareAdmin, UsuarioController.listar);
+router.put('/admin-editar', authMiddlewareAdmin, UsuarioController.adminEditar);
+router.put('/status/:id', authMiddlewareAdmin, UsuarioController.alternarStatus);
+router.delete('/excluir/:id', authMiddlewareAdmin, UsuarioController.excluir);
 
 export default router;
