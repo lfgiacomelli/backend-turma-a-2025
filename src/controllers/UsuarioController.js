@@ -71,7 +71,6 @@ const UsuarioController = {
       );
 
       const usu_codigo = result.rows[0].usu_codigo;
-f
       const usuarioResult = await pool.query(
         `SELECT usu_codigo, usu_nome, usu_email, usu_telefone, usu_created_at, usu_cpf
        FROM usuarios WHERE usu_codigo = $1`,
