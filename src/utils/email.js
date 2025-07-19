@@ -11,12 +11,12 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASSWORD,
   },
 });
-
-export async function enviarEmail({ to, subject, text }) {
+export async function enviarEmail({ to, subject, text, html }) {
   await transporter.sendMail({
     from: `ZoomX - Mototáxis <${process.env.EMAIL_USER}>`,
     to,
     subject,
     text,
+    html,
   });
 }

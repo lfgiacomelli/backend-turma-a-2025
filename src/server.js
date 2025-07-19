@@ -13,6 +13,7 @@ import routesAnuncio from './routes/anuncio_routes.js';
 import routesAvaliacao from './routes/avaliacao_routes.js';
 import routesPayment from './routes/payment_routes.js';
 import routesAddress from './routes/address_routes.js';
+import routesEmail from './routes/email_contratacao.js';
 
 import routesAdminMotocicleta from './routes/AdminRoutes/motocicleta_routes.js';
 import routesAdminUsuario from './routes/AdminRoutes/usuario_routes.js';
@@ -45,6 +46,8 @@ server.use('/api/anuncios', routesAnuncio);
 server.use('/api/avaliacoes', routesAvaliacao);
 server.use('/api/payments', routesPayment);
 server.use('/api/enderecos', routesAddress);
+server.use('/api/email', routesEmail);
+
 
 server.use('/api/admin/usuarios', routesAdminUsuario);
 server.use('/api/admin/solicitacoes', routesAdminSolicitacao);
@@ -55,7 +58,7 @@ server.use('/api/admin/motocicletas', routesAdminMotocicleta);
 server.use('/api/admin/relatorios', routesAdminRelatorio);
 server.use('/api/admin/login', loginFuncionarioRoutes);
 
-server.get('/', (req, res) => {
+server.get('/', (req, res) => { 
   res.send('Backend server is running!');
 });
 

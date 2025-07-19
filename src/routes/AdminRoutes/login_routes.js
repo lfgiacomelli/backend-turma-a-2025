@@ -49,8 +49,12 @@ router.post('/', async (req, res) => {
         }
 
         const token = jwt.sign(
-            { id: funcionario.fun_codigo, email: funcionario.fun_email },
-            JWT_SECRET_ADMIN,
+            {
+                id: funcionario.fun_codigo,
+                email: funcionario.fun_email,
+                isAdmin: true
+            },
+            JWT_SECRET,
             { expiresIn: '45d' }
         );
 
