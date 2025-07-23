@@ -87,7 +87,9 @@ class PaymentController {
             await enviarEmail({
                 to: usu_email,
                 subject: 'Seu QR Code de Pagamento ZoomX',
-                text: `Olá ${usu_nome}! Seu QR Code de pagamento já foi e está disponível para realizar o pagamento de R$ ${sol_valor} referente ao serviço de "${sol_servico}" em nosso aplicativo.\n\nVocê pode acessar o QR Code através do seguinte link: ${ticket_url}\n\nAgradecemos por escolher o ZoomX!`,
+                text: `Olá ${usu_nome}! Seu QR Code de pagamento já foi e está disponível para realizar o pagamento de R$ ${sol_valor} referente ao serviço de ${sol_servico} em nosso aplicativo.\n\nVocê pode acessar o QR Code através do seguinte link: 
+                ${paymentData.point_of_interaction?.transaction_data?.ticket_url}
+                \n\nAgradecemos por escolher o ZoomX!`,
             });
             return res.status(200).json(paymentData);
         } catch (error) {
