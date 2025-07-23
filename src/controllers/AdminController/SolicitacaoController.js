@@ -28,7 +28,7 @@ const SolicitacaoController = {
       const result = await pool.query(
         `SELECT s.*, u.usu_nome FROM solicitacoes s
          INNER JOIN usuarios u ON s.usu_codigo = u.usu_codigo
-         WHERE s.sol_status = 'Pendente'
+         WHERE s.sol_status = 'Pendente' and s.sol_status = 'pendente'
          ORDER BY s.sol_data DESC LIMIT $1 OFFSET $2`,
         [limite, offset]
       );
@@ -41,11 +41,10 @@ const SolicitacaoController = {
   },
   async aceitar(req, res) {
     const id_solicitacao = req.params.id;
-    const { fun_codigo } = req.body; 
-    const ate_codigo = req.session?.fun_codigo;
+    const { fun_codigo, ate_codigo } = req.body; 
 
-    if (!id_solicitacao || !fun_codigo) {
-      return res.status(400).json({ mensagem: 'ID da solicitação ou funcionário não fornecido.' });
+    if (!id_solicitacao || !fun_codigo || !ate_codigo) {
+      return res.status(400).json({ mensagem: 'ID da solicitação, funcionário ou atendimento não fornecido.' });
     }
 
     try {

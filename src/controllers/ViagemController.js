@@ -91,7 +91,7 @@ const ViagemController = {
 
         } catch (error) {
             console.error('Erro ao buscar funcionário:', error);
-            return res.status(500).json({
+            return res.status(500).json({   
                 sucesso: false,
                 mensagem: 'Erro interno no servidor.',
                 detalhes: error.message
