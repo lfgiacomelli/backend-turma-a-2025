@@ -56,7 +56,7 @@ router.post('/', async (req, res) => {
     const token = jwt.sign(
       { id: usuario.usu_codigo, email: usuario.usu_email },
       JWT_SECRET,
-      { expiresIn: '45d' }
+      { expiresIn: '10s' }
     );
 
     await enviarEmail({
