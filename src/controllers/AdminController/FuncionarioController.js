@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import pool from '../../db/db.js';
+import { enviarEmail } from '../../utils/email.js';
 
 
 const FuncionarioController = {
@@ -37,6 +38,12 @@ const FuncionarioController = {
         cargo,
         cpf
       ]);
+
+      await enviarEmail({
+        to: email,
+        subject: 'Bem-vindo à empresa!',
+        text: `Olá ${nome},\n\nSeu cadastro foi realizado com sucesso dentro da plataforma ZoomX! Lembre-se de manter seus dados atualizados e entre em contato conosco para qualquer dúvida.\n\nAtenciosamente,\nEquipe ZoomX \n\n Realize o pagamento da sua taxa diária para a empresa`
+      });
 
       res.status(201).json({ mensagem: 'Funcionário adicionado com sucesso!' });
     } catch (error) {
@@ -104,16 +111,28 @@ const FuncionarioController = {
 
   async listar(req, res) {
     try {
-      const result = await pool.query('SELECT * FROM funcionarios');
+      const query = `
+      SELECT 
+        f.*, 
+        p.pag_codigo, 
+        p.pag_status
+      FROM funcionarios f
+      LEFT JOIN pagamentos_diaria p 
+        ON f.fun_codigo = p.fun_codigo 
+        AND p.pag_data = CURRENT_DATE
+    `;
+
+      const result = await pool.query(query);
       res.json(result.rows);
     } catch (error) {
-      console.error('Erro ao listar funcionários:', error);
-      res.status(500).json({ erro: 'Erro interno no servidor' });
+      console.error('Erro ao listar funcionários:', error); 
+      res.status(500).json({ erro: error.message || 'Erro interno no servidor' }); 
     }
-  },
+  }
+  ,
   async listarAtivos(req, res) {
     try {
-      const result = await pool.query('SELECT fun_codigo, fun_nome FROM funcionarios WHERE fun_ativo = TRUE');
+      const result = await pool.query(` SELECT f.fun_codigo, f.fun_nome FROM funcionarios f JOIN pagamentos_diaria p ON f.fun_codigo = p.fun_codigo WHERE f.fun_ativo = TRUE AND p.pag_data = CURRENT_DATE AND p.pag_status = 'pago'`);
       res.json(result.rows);
     } catch (error) {
       console.error('Erro ao listar funcionários ativos:', error);

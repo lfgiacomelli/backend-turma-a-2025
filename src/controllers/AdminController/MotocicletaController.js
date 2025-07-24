@@ -1,7 +1,5 @@
 import pool from '../../db/db.js';
 
-
-
 const MotocicletaController = {
   async listar(req, res) {
     try {
@@ -35,27 +33,30 @@ LIMIT $1 OFFSET $2
     }
   },
   async adicionar(req, res) {
+    const { mot_modelo, mot_placa, mot_ano, mot_cor, fun_codigo } = req.body;
+
+    if (!mot_modelo) {
+      return res.status(400).json({ message: "O campo 'mot_modelo' é obrigatório." });
+    }
+
     try {
-      const { modelo, placa, ano, cor, fun_codigo } = req.body;
-
-      const query = `
-        INSERT INTO motocicletas (mot_modelo, mot_placa, mot_ano, mot_cor, fun_codigo)
-        VALUES ($1, $2, $3, $4, $5)
-      `;
-
-      await pool.query(query, [modelo, placa, ano, cor, fun_codigo]);
-
-      res.status(201).json({ mensagem: 'Motocicleta adicionada com sucesso!' });
+      const result = await pool.query(
+        `INSERT INTO motocicletas (mot_modelo, mot_placa, mot_ano, mot_cor, fun_codigo)
+       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+        [mot_modelo, mot_placa, mot_ano, mot_cor, fun_codigo]
+      );
+      res.status(201).json(result.rows[0]);
     } catch (error) {
-      console.error('Erro ao adicionar motocicleta:', error);
-      res.status(500).json({ erro: 'Erro interno no servidor' });
+      console.error(error);
+      res.status(500).json({ message: 'Erro ao adicionar motocicleta' });
     }
   },
 
   async editar(req, res) {
     try {
       const { id } = req.params;
-      const { modelo, placa, ano, cor } = req.body;
+      const { mot_modelo, mot_placa, mot_ano, mot_cor } = req.body;
+
 
       const query = `
         UPDATE motocicletas 
@@ -63,9 +64,10 @@ LIMIT $1 OFFSET $2
         WHERE mot_codigo = $5
       `;
 
-      await pool.query(query, [modelo, placa, ano, cor, id]);
+      await pool.query(query, [mot_modelo, mot_placa, mot_ano, mot_cor, id]);
 
       res.json({ mensagem: 'Motocicleta editada com sucesso!' });
+
     } catch (error) {
       console.error('Erro ao editar motocicleta:', error);
       res.status(500).json({ erro: 'Erro interno no servidor' });

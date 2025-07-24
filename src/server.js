@@ -3,6 +3,7 @@ dotenv.config();
 
 import express from 'express';
 import cors from 'cors';
+import './cron/gerarDiarias.js';
 
 import routesUsuario from './routes/usuario_routes.js';
 import routesSolicitacao from './routes/solicitacoes_routes.js';
@@ -23,6 +24,7 @@ import routesAdminAnuncio from './routes/AdminRoutes/anuncio_routes.js';
 import routesAdminFuncionario from './routes/AdminRoutes/funcionario_routes.js';
 import routesAdminRelatorio from './routes/AdminRoutes/relatorio_routes.js';
 import loginFuncionarioRoutes from './routes/AdminRoutes/login_routes.js';
+import routesPagamentos from './routes/AdminRoutes/pagamento_routes.js';
 
 
 const server = express();
@@ -57,6 +59,7 @@ server.use('/api/admin/funcionarios', routesAdminFuncionario);
 server.use('/api/admin/motocicletas', routesAdminMotocicleta);
 server.use('/api/admin/relatorios', routesAdminRelatorio);
 server.use('/api/admin/login', loginFuncionarioRoutes);
+server.use('/api/admin/pagamentos', routesPagamentos);
 
 server.get('/', (req, res) => { 
   res.send('Backend server is running!');
