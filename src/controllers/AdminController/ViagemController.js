@@ -28,17 +28,28 @@ const ViagemController = {
       const offset = (pagina - 1) * limite;
 
       const sql = `
-        SELECT 
-          v.via_codigo, v.via_origem, v.via_destino, v.via_valor, v.via_formapagamento,
-          v.via_data, v.via_servico, v.via_status, v.via_observacoes,
-          f.fun_nome AS funcionario_nome,
-          u.usu_nome AS usuario_nome
-        FROM viagens v
-        LEFT JOIN funcionarios f ON v.fun_codigo = f.fun_codigo
-        LEFT JOIN usuarios u ON v.usu_codigo = u.usu_codigo
-        ${whereSql}
-        ORDER BY v.via_data DESC
-        LIMIT $${idx++} OFFSET $${idx++}
+       SELECT
+  v.via_codigo,
+  v.via_origem,
+  v.via_destino,
+  v.via_valor,
+  v.via_formapagamento,
+  v.via_data,
+  v.via_servico,
+  v.via_status,
+  v.via_observacoes,
+  v.ate_codigo,
+  f.fun_nome AS funcionario_nome,
+  fa.fun_nome AS atendente_nome, -- novo campo para mostrar o nome do atendente
+  u.usu_nome AS usuario_nome
+FROM viagens v
+LEFT JOIN funcionarios f ON v.fun_codigo = f.fun_codigo           -- funcionário da viagem
+LEFT JOIN funcionarios fa ON v.ate_codigo = fa.fun_codigo         -- atendente da viagem
+LEFT JOIN usuarios u ON v.usu_codigo = u.usu_codigo
+${whereSql}
+ORDER BY v.via_data DESC
+LIMIT $${idx++} OFFSET $${idx++}
+
       `;
 
       params.push(parseInt(limite), parseInt(offset));

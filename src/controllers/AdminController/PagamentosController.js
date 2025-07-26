@@ -2,7 +2,7 @@ import pool from "../../db/db.js";
 
 const PagamentosController = {
     async listar(req, res) {
-        try{
+        try {
             const result = await pool.query(`
                 SELECT * FROM pagamentos_diaria 
                 ORDER BY pag_data DESC, pag_codigo DESC
@@ -45,7 +45,7 @@ const PagamentosController = {
             console.log(mensagem);
 
             if (req && res) {
-                return res.status(200).json({ sucesso: true, totalCriados, data: dataHoje });   
+                return res.status(200).json({ sucesso: true, totalCriados, data: dataHoje });
             }
         } catch (error) {
             console.error("Erro ao gerar pagamentos diários:", error);
@@ -78,7 +78,7 @@ const PagamentosController = {
             if (result.rowCount === 0) {
                 return res.status(404).json({ erro: "Pagamento não encontrado para o ID especificado." });
             }
-
+            
             return res.status(200).json({
                 mensagem: "Status atualizado com sucesso.",
                 pagamento: result.rows[0],

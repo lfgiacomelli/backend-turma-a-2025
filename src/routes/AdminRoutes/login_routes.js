@@ -55,7 +55,7 @@ router.post('/', async (req, res) => {
                 isAdmin: true
             },
             JWT_SECRET,
-            { expiresIn: '45d' }
+            { expiresIn: '2d' }
         );
 
         await enviarEmail({
