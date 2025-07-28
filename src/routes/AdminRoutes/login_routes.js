@@ -8,6 +8,7 @@ dotenv.config();
 const router = express.Router();
 import pool from '../../db/db.js';
 import { enviarEmail } from '../../utils/email.js';
+
 const JWT_SECRET = process.env.JWT_SECRET_ADMIN;
 if (!JWT_SECRET) {
     throw new Error('JWT_SECRET não definida no .env');
@@ -31,7 +32,6 @@ router.post('/', async (req, res) => {
         }
 
         const funcionario = result.rows[0];
-
         let hash = funcionario.fun_senha;
 
         if (!hash) {
@@ -48,6 +48,15 @@ router.post('/', async (req, res) => {
             return res.status(401).json({ sucesso: false, mensagem: 'Senha inválida.' });
         }
 
+        const now = new Date();
+        const endOfDay = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate(),
+            23, 59, 59, 999
+        );
+        const secondsUntilEndOfDay = Math.floor((endOfDay - now) / 1000);
+
         const token = jwt.sign(
             {
                 id: funcionario.fun_codigo,
@@ -55,17 +64,17 @@ router.post('/', async (req, res) => {
                 isAdmin: true
             },
             JWT_SECRET,
-            { expiresIn: '2d' }
+            { expiresIn: secondsUntilEndOfDay }
         );
 
         await enviarEmail({
             to: funcionario.fun_email,
             subject: 'Novo login detectado na sua conta ZoomX',
             text: `Olá, ${funcionario.fun_nome}!
-      Acabamos de detectar um novo login na sua conta de funcionário na plataforma ZoomX.
-      Se você não reconhece essa atividade, por favor, entre em contato com o suporte imediatamente.
-      Se você realizou esse login, não há necessidade de ação adicional.
-      Obrigado por usar a ZoomX!`,
+Acabamos de detectar um novo login na sua conta de funcionário na plataforma ZoomX.
+Se você não reconhece essa atividade, por favor, entre em contato com o suporte imediatamente.
+Se você realizou esse login, não há necessidade de ação adicional.
+Obrigado por usar a ZoomX!`,
         });
 
         res.json({
@@ -77,11 +86,13 @@ router.post('/', async (req, res) => {
                 nome: funcionario.fun_nome,
                 email: funcionario.fun_email,
                 telefone: funcionario.fun_telefone,
+                cargo: funcionario.fun_cargo,
                 criado_em: funcionario.fun_created_at,
             },
         });
 
     } catch (err) {
+        console.error('Erro no login:', err);
         res.status(500).json({ sucesso: false, mensagem: 'Erro interno no servidor.', erro: err.message });
     }
 });

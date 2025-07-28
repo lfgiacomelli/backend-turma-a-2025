@@ -4,8 +4,17 @@ const PagamentosController = {
     async listar(req, res) {
         try {
             const result = await pool.query(`
-                SELECT * FROM pagamentos_diaria 
-                ORDER BY pag_data DESC, pag_codigo DESC
+               SELECT 
+    p.*, 
+    f.fun_nome 
+FROM 
+    pagamentos_diaria p
+JOIN 
+    funcionarios f ON p.fun_codigo = f.fun_codigo
+ORDER BY 
+    p.pag_data DESC, 
+    p.pag_codigo DESC;
+
             `);
             return res.status(200).json(result.rows);
         } catch (error) {
@@ -45,6 +54,9 @@ const PagamentosController = {
             console.log(mensagem);
 
             if (req && res) {
+                if( totalCriados === 0) {
+                    return res.status(204).end();
+                }
                 return res.status(200).json({ sucesso: true, totalCriados, data: dataHoje });
             }
         } catch (error) {
@@ -78,7 +90,7 @@ const PagamentosController = {
             if (result.rowCount === 0) {
                 return res.status(404).json({ erro: "Pagamento não encontrado para o ID especificado." });
             }
-            
+
             return res.status(200).json({
                 mensagem: "Status atualizado com sucesso.",
                 pagamento: result.rows[0],
