@@ -4,14 +4,10 @@ import pool from '../../db/db.js';
 const SolicitacaoController = {
   async listar(req, res) {
     try {
-      const { pagina = 1, limite = 10 } = req.query;
-      const offset = (pagina - 1) * limite;
-
       const result = await pool.query(
         `SELECT s.*, u.usu_nome FROM solicitacoes s
          INNER JOIN usuarios u ON s.usu_codigo = u.usu_codigo
-         ORDER BY sol_data DESC LIMIT $1 OFFSET $2`,
-        [limite, offset]
+         ORDER BY sol_data DESC`,
       );
 
       res.json(result.rows);

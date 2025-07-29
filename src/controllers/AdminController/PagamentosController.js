@@ -99,6 +99,30 @@ ORDER BY
             console.error("Erro ao atualizar status do pagamento:", error);
             res.status(500).json({ erro: "Erro ao atualizar status do pagamento." });
         }
+    },
+    async atualizarNaoPago(req, res) {
+        try{
+            const { id } = req.params;
+            if (!id) {
+                return res.status(400).json({ erro: "ID do pagamento é obrigatório." });
+            }
+            const result = await pool.query(
+                `UPDATE pagamentos_diaria SET pag_status = 'não paga', pag_forma_pagament = 'indefinido', atualizado_em = NOW() WHERE pag_codigo = $1 RETURNING *`,
+                [id]
+            );
+
+            if (result.rowCount === 0) {
+                return res.status(404).json({ erro: "Pagamento não encontrado para o ID especificado." });
+            }
+
+            return res.status(200).json({
+                mensagem: "Status atualizado com sucesso.",
+                pagamento: result.rows[0],
+            });
+        } catch (error) {
+            console.error("Erro ao atualizar status do pagamento:", error);
+            res.status(500).json({ erro: "Erro ao atualizar status do pagamento." });
+        }
     }
 
 };
