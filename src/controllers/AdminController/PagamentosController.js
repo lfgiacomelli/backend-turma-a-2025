@@ -123,22 +123,6 @@ ORDER BY
             console.error("Erro ao atualizar status do pagamento:", error);
             res.status(500).json({ erro: "Erro ao atualizar status do pagamento." });
         }
-    },
-
-    async getPaymentsToday(req, res) {
-        const dataHoje = new Date().toISOString().split("T")[0];
-
-        try {
-            const result = await pool.query(`
-                SELECT * FROM pagamentos_diaria 
-                WHERE pag_data = $1
-            `, [dataHoje]);
-
-            return res.status(200).json(result.rows);
-        } catch (error) {
-            console.error("Erro ao obter pagamentos do dia:", error);
-            return res.status(500).json({ erro: "Erro ao obter pagamentos do dia." });
-        }
     }
 
 };
