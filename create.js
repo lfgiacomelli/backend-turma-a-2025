@@ -2,20 +2,12 @@ import pool from "./src/db/db.js";
 
 async function executarConsulta() {
   try {
-    const sql = `
-    UPDATE solicitacoes
-SET sol_status = 'Pendente'
-WHERE sol_codigo = (
-  SELECT sol_codigo
-  FROM solicitacoes
-  ORDER BY sol_codigo DESC
-  LIMIT 1
-);
+    const sql = ` select * from usuarios where usu_email = 'eteccontaestudos@gmail.com'
 
 `;
     const resultado = await pool.query(sql);
 
-    console.log(`Linhas afetadas: ${resultado.rowCount}`);
+    console.log('Resultado da consulta:', resultado.rows);
   } catch (erro) {
     console.error('Erro ao executar SQL:', erro);
   } finally {

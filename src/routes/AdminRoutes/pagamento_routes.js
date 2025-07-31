@@ -7,6 +7,7 @@ import authMiddlewareAdmin from "../../middlewares/authMiddlewareAdmin.js";
 const router = express.Router();
 
 router.get("/", authMiddlewareAdmin, PagamentosController.listar);
+router.get('/hoje', authMiddlewareAdmin, PagamentosController.getPaymentsToday);
 router.post("/gerar-diarias", authMiddlewareAdmin, PagamentosController.gerarDiarias);
 router.put("/atualizar-status/:id", authMiddlewareAdmin, PagamentosController.atualizarStatus);
 
