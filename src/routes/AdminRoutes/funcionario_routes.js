@@ -10,6 +10,7 @@ const router = express.Router();
 
 router.get('/', authMiddlewareAdmin, FuncionarioController.listar);
 router.get('/ativos', authMiddlewareAdmin, FuncionarioController.listarAtivos);
+router.get('/listar-sem-moto', FuncionarioController.verificarFuncionariosSemMoto);
 router.post('/adicionar', upload.single('foto'), FuncionarioController.adicionar);
 router.put('/editar/:id', authMiddlewareAdmin, FuncionarioController.editar);
 router.delete('/excluir/:id', authMiddlewareAdmin, FuncionarioController.excluir);

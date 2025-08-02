@@ -22,6 +22,26 @@ ORDER BY
             return res.status(500).json({ erro: "Erro ao listar pagamentos." });
         }
     },
+    async verificarPagamentosHoje(req, res) {
+        try {
+            const result = await pool.query(`
+            SELECT COUNT(*) AS total
+            FROM pagamentos_diaria
+            WHERE pag_data::date = CURRENT_DATE;
+        `);
+
+            const total = parseInt(result.rows[0].total, 10);
+
+            return res.status(200).json({
+                data: new Date().toISOString().split('T')[0],
+                ha_pagamentos: total > 0,
+                total_pagamentos: total
+            });
+        } catch (error) {
+            console.error("Erro ao verificar pagamentos de hoje:", error);
+            return res.status(500).json({ erro: "Erro ao verificar pagamentos de hoje." });
+        }
+    },
     async gerarDiarias(req, res) {
         const dataHoje = new Date().toISOString().split("T")[0];
 
@@ -54,7 +74,7 @@ ORDER BY
             console.log(mensagem);
 
             if (req && res) {
-                if( totalCriados === 0) {
+                if (totalCriados === 0) {
                     return res.status(204).end();
                 }
                 return res.status(200).json({ sucesso: true, totalCriados, data: dataHoje });
@@ -101,7 +121,7 @@ ORDER BY
         }
     },
     async atualizarNaoPago(req, res) {
-        try{
+        try {
             const { id } = req.params;
             if (!id) {
                 return res.status(400).json({ erro: "ID do pagamento é obrigatório." });

@@ -125,14 +125,21 @@ const FuncionarioController = {
       const result = await pool.query(query);
       res.json(result.rows);
     } catch (error) {
-      console.error('Erro ao listar funcionários:', error); 
-      res.status(500).json({ erro: error.message || 'Erro interno no servidor' }); 
+      console.error('Erro ao listar funcionários:', error);
+      res.status(500).json({ erro: error.message || 'Erro interno no servidor' });
     }
   }
   ,
   async listarAtivos(req, res) {
     try {
-      const result = await pool.query(` SELECT f.fun_codigo, f.fun_nome FROM funcionarios f JOIN pagamentos_diaria p ON f.fun_codigo = p.fun_codigo WHERE f.fun_ativo = TRUE AND p.pag_data = CURRENT_DATE AND p.pag_status = 'pago'`);
+      const result = await pool.query(` SELECT f.fun_codigo, f.fun_nome
+FROM funcionarios f
+JOIN pagamentos_diaria p ON f.fun_codigo = p.fun_codigo
+JOIN motocicletas m ON f.fun_codigo = m.fun_codigo
+WHERE f.fun_ativo = TRUE
+  AND p.pag_data = CURRENT_DATE
+  AND p.pag_status = 'pago';
+`);
       res.json(result.rows);
     } catch (error) {
       console.error('Erro ao listar funcionários ativos:', error);
@@ -167,7 +174,36 @@ const FuncionarioController = {
       console.error('Erro ao alterar status do funcionário:', error);
       res.status(500).json({ erro: 'Erro interno no servidor' });
     }
-  }
+  },
+ async verificarFuncionariosSemMoto(req, res) {
+    try {
+        const result = await pool.query(`
+            SELECT f.fun_codigo, f.fun_nome, f.fun_cargo
+            FROM funcionarios f
+            LEFT JOIN motocicletas m ON f.fun_codigo = m.fun_codigo
+            WHERE m.fun_codigo IS NULL
+              AND f.fun_cargo = 'Mototaxista';
+        `);
+
+        const funcionariosSemMoto = result.rows;
+
+        if (funcionariosSemMoto.length === 0) {
+            return res.status(200).json({ mensagem: "Todos os Mototaxistas têm motos cadastradas." });
+        }
+
+        return res.status(200).json({
+            mensagem: "Mototaxistas sem motos cadastradas.",
+            funcionarios: funcionariosSemMoto
+        });
+    } catch (error) {
+        console.error("Erro ao verificar funcionários sem moto:", error);
+        return res.status(500).json({ erro: "Erro ao verificar funcionários sem moto." });
+    }
+}
+
+
+
+
 
 
 };
