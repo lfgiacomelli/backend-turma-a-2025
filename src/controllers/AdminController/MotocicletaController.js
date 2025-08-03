@@ -36,7 +36,7 @@ LIMIT $1 OFFSET $2
     const { mot_modelo, mot_placa, mot_ano, mot_cor, fun_codigo } = req.body;
 
     if (!mot_modelo) {
-      return res.status(400).json({ message: "O campo 'mot_modelo' é obrigatório." });
+      return res.status(400).json({ message: "O modelo da motocicleta é obrigatório." });
     }
 
     try {
@@ -45,12 +45,51 @@ LIMIT $1 OFFSET $2
        VALUES ($1, $2, $3, $4, $5) RETURNING *`,
         [mot_modelo, mot_placa, mot_ano, mot_cor, fun_codigo]
       );
-      res.status(201).json(result.rows[0]);
+
+      const motoAdicionada = result.rows[0];
+
+      const emailResult = await pool.query(
+        `SELECT fun_email, fun_nome FROM funcionarios WHERE fun_codigo = $1`,
+        [fun_codigo]
+      );
+
+      const funEmail = emailResult.rows[0]?.fun_email;
+      const funNome = emailResult.rows[0]?.fun_nome;
+
+      if (funEmail) {
+        await enviarEmail({
+          to: funEmail,
+          subject: 'Motocicleta cadastrada',
+          body: `Olá, ${funNome},
+
+A motocicleta abaixo foi cadastrada com sucesso em nosso sistema:
+
+Modelo: ${mot_modelo}
+
+Placa: ${mot_placa}
+
+Ano: ${mot_ano}
+
+Cor: ${mot_cor}
+
+Com isso, você estará apto(a) a receber solicitações de serviço, desde que esteja disponível e com todas as pendências de pagamento da diária devidamente regularizadas.
+
+Por gentileza, revise as informações acima. Caso identifique qualquer dado incorreto, entre em contato com a equipe de gestão para realizar as devidas correções.
+
+Atenciosamente,
+Equipe ZoomX`
+        });
+      } else {
+        console.warn(`Funcionário com código ${fun_codigo} não encontrado ou sem e-mail.`);
+      }
+
+      res.status(201).json(motoAdicionada);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Erro ao adicionar motocicleta' });
     }
   },
+
 
   async editar(req, res) {
     try {

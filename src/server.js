@@ -5,6 +5,7 @@ import express from 'express';
 import cors from 'cors';
 
 import './cron/gerarDiarias.js';
+import './cron/verificarAusencia.js';
 
 import routesUsuario from './routes/usuario_routes.js';
 import routesSolicitacao from './routes/solicitacoes_routes.js';
@@ -26,6 +27,7 @@ import routesAdminFuncionario from './routes/AdminRoutes/funcionario_routes.js';
 import routesAdminRelatorio from './routes/AdminRoutes/relatorio_routes.js';
 import loginFuncionarioRoutes from './routes/AdminRoutes/login_routes.js';
 import routesPagamentos from './routes/AdminRoutes/pagamento_routes.js';
+import routesFotoFuncionario from './routes/AdminRoutes/foto_funcionario_routes.js';
 
 
 const server = express();
@@ -39,6 +41,8 @@ const corsOptions = {
 
 server.use(cors(corsOptions));
 server.use(express.json());
+
+server.use('/uploads', express.static('uploads'));
 
 server.use("/api/usuarios", routesUsuario);
 server.use("/api/solicitacoes", routesSolicitacao);
@@ -61,6 +65,7 @@ server.use('/api/admin/motocicletas', routesAdminMotocicleta);
 server.use('/api/admin/relatorios', routesAdminRelatorio);
 server.use('/api/admin/login', loginFuncionarioRoutes);
 server.use('/api/admin/pagamentos', routesPagamentos);
+server.use('/api/admin/foto-funcionario', routesFotoFuncionario);
 
 server.get('/', (req, res) => { 
   res.send('Backend server is running!');

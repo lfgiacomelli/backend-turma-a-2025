@@ -127,7 +127,7 @@ ORDER BY
                 return res.status(400).json({ erro: "ID do pagamento é obrigatório." });
             }
             const result = await pool.query(
-                `UPDATE pagamentos_diaria SET pag_status = 'não paga', pag_forma_pagament = 'indefinido', atualizado_em = NOW() WHERE pag_codigo = $1 RETURNING *`,
+                `UPDATE pagamentos_diaria SET pag_status = 'cancelado', pag_forma_pagament = 'indefinido', atualizado_em = NOW() WHERE pag_codigo = $1 RETURNING *`,
                 [id]
             );
 

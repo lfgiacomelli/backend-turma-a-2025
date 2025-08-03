@@ -32,10 +32,9 @@ router.post('/', async (req, res) => {
 
     const usuario = result.rows[0];
 
-    // Removida a verificação de usuário ativo (banimento)
-    // if (!usuario.usu_ativo) {
-    //   return res.status(403).json({ sucesso: false, mensagem: 'Usuário banido ou inativo.' });
-    // }
+    if (!usuario.usu_ativo) {
+      return res.status(403).json({ sucesso: false, mensagem: 'Usuário banido ou inativo.' });
+    }
 
     let hash = usuario.usu_senha;
 
