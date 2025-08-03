@@ -41,6 +41,18 @@ const FotoFuncionarioController = {
       console.error('Erro ao listar funcionários sem foto:', error);
       res.status(500).json({ erro: 'Erro interno no servidor' });
     }
+  },
+  async exibirFotos(req, res) {
+    try {
+      const sql = `
+        SELECT fun_codigo, fun_nome, fun_documento FROM funcionarios WHERE fun_documento IS NOT NULL
+      `;
+      const result = await pool.query(sql);
+      res.json(result.rows);
+    } catch (error) {
+      console.error('Erro ao exibir fotos de funcionários:', error);
+      res.status(500).json({ erro: 'Erro interno no servidor' });
+    }
   }
 };
 

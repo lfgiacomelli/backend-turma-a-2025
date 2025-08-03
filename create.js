@@ -3,14 +3,7 @@ import pool from "./src/db/db.js";
 async function executarConsulta() {
   try {
     const sql = `
-    SELECT 
-  v.*,
-  m.mot_modelo,
-  m.mot_placa
-FROM viagens v
-INNER JOIN motocicletas m ON v.fun_codigo = m.fun_codigo
-WHERE v.fun_codigo = $1
-
+    select fun_documento from funcionarios
 `;
     const resultado = await pool.query(sql);
 

@@ -17,7 +17,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-router.post('/upload-foto-cnh', upload.single('file'), authMiddlewareAdmin, FotoFuncionarioController.uploadFoto);
 router.get('/listar-sem-foto', authMiddlewareAdmin, FotoFuncionarioController.listarSemFoto);
+router.get('/exibir-fotos', authMiddlewareAdmin, FotoFuncionarioController.exibirFotos);
+router.post('/upload-foto-cnh', upload.single('file'), authMiddlewareAdmin, FotoFuncionarioController.uploadFoto);
 
 export default router;
