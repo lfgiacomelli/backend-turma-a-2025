@@ -71,7 +71,7 @@ server.get('/', (req, res) => {
   res.send('Backend server is running!');
 });
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
   console.log(`Node environment: ${process.env.NODE_ENV || 'development'}`);

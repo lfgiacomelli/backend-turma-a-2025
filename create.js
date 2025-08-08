@@ -3,7 +3,7 @@ import pool from "./src/db/db.js";
 async function executarConsulta() {
   try {
     const sql = `
-    select fun_documento from funcionarios
+    update funcionarios set fun_documento = NULL
 `;
     const resultado = await pool.query(sql);
 
