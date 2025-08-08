@@ -277,7 +277,7 @@ FROM viagens v
 INNER JOIN motocicletas m ON v.fun_codigo = m.fun_codigo
 INNER JOIN funcionarios f ON v.fun_codigo = f.fun_codigo
 WHERE v.fun_codigo = $1
-ORDER BY v.viagem_data DESC
+ORDER BY v.via_data DESC
     `, [funCodigo]);
 
       res.json(result.rows);
