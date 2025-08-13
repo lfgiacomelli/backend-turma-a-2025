@@ -60,14 +60,17 @@ ORDER BY
 
                 if (rowCount === 0) {
                     await pool.query(
-                        `INSERT INTO pagamentos_diaria 
-             (fun_codigo, pag_valor, pag_data, pag_forma_pagament, pag_status)
-             VALUES ($1, $2, $3, $4, $5)`,
+                        `INSERT INTO pagamentos_diaria (fun_codigo, pag_valor, pag_data, pag_forma_pagament, pag_status)
+         SELECT $1, $2, $3, $4, $5
+         FROM funcionarios
+         WHERE fun_codigo = $1
+         AND fun_cargo = 'Mototaxista'`,
                         [fun_codigo, 20.00, dataHoje, 'indefinido', 'pendente']
                     );
 
                     totalCriados++;
                 }
+
             }
 
             const mensagem = `Pagamentos criados com sucesso: ${totalCriados}`;
