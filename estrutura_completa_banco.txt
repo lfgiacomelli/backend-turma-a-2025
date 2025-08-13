@@ -81,6 +81,7 @@ public.usuarios - usu_ativo (boolean) [nullable: YES]
 public.usuarios - usu_created_at (timestamp without time zone) [nullable: NO]
 public.usuarios - usu_updated_at (timestamp without time zone) [nullable: NO]
 public.usuarios - usu_cpf (character varying) [nullable: NO]
+public.usuarios - push_token VARCHAR
 public.viagens - via_codigo (integer) [nullable: NO]
 public.viagens - fun_codigo (integer) [nullable: NO]
 public.viagens - ate_codigo (integer) [nullable: NO]
