@@ -34,7 +34,8 @@ const PushNotifications = {
                 sound: "default",
                 title: m.title,
                 body: m.body,
-                data: m.data || {}
+                data: m.data || {},
+                priority: m.priority || "high"
             })));
 
             for (let chunk of chunks) {
@@ -48,6 +49,7 @@ const PushNotifications = {
             return res.status(500).json({ message: "Erro ao enviar notificações push" });
         }
     }
+
 
 };
 
