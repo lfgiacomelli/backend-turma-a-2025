@@ -238,15 +238,6 @@ const UsuarioController = {
     }
   },
 
-  async getAllUsuarios(req, res) {
-    try {
-      const result = await pool.query('SELECT usu_codigo, usu_nome, usu_telefone, usu_email FROM usuarios');
-      res.status(200).json(result.rows);
-    } catch (error) {
-      console.error('Erro getAllUsuarios:', error);
-      res.status(500).json({ message: error.message });
-    }
-  },
   async verificarBanimento(req, res) {
     try {
       const { id } = req.params;
@@ -313,7 +304,33 @@ Este é um e-mail automático. Por favor, não responda diretamente a esta mensa
       console.error("Erro ao verificar banimento:", erro);
       return res.status(500).json({ sucesso: false, mensagem: "Erro no servidor." });
     }
+  },
+
+  async adicionarPushToken(req, res) {
+    const { id } = req.params;          // id do usuário na URL
+    const { pushToken } = req.body;     // token enviado no corpo JSON
+
+    if (!pushToken) {
+      return res.status(400).json({ sucesso: false, mensagem: "Push token é obrigatório." });
+    }
+
+    try {
+      const result = await pool.query(
+        `UPDATE usuarios SET push_token = $1 WHERE usu_codigo = $2`,
+        [pushToken, id]
+      );
+
+      if (result.rowCount === 0) {
+        return res.status(404).json({ sucesso: false, mensagem: "Usuário não encontrado." });
+      }
+
+      return res.status(200).json({ sucesso: true, mensagem: "Push token adicionado com sucesso." });
+    } catch (error) {
+      console.error("Erro ao adicionar push token:", error);
+      return res.status(500).json({ sucesso: false, mensagem: "Erro no servidor." });
+    }
   }
+
 
 
 };

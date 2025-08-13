@@ -28,7 +28,7 @@ import routesAdminRelatorio from './routes/AdminRoutes/relatorio_routes.js';
 import loginFuncionarioRoutes from './routes/AdminRoutes/login_routes.js';
 import routesPagamentos from './routes/AdminRoutes/pagamento_routes.js';
 import routesFotoFuncionario from './routes/AdminRoutes/foto_funcionario_routes.js';
-
+import routesPushNotifications from './routes/AdminRoutes/push_notifications_routes.js'
 
 const server = express();
 
@@ -66,6 +66,7 @@ server.use('/api/admin/relatorios', routesAdminRelatorio);
 server.use('/api/admin/login', loginFuncionarioRoutes);
 server.use('/api/admin/pagamentos', routesPagamentos);
 server.use('/api/admin/foto-funcionario', routesFotoFuncionario);
+server.use('/api/admin/notificacoes', routesPushNotifications);
 
 server.get('/', (req, res) => { 
   res.send('Backend server is running!');
