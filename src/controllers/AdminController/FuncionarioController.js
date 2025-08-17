@@ -347,7 +347,43 @@ LIMIT 1;
         message: "Ocorreu um erro ao estimar os ganhos diários.",
       });
     }
+  },
+
+ async verificarSeFuncionarioPagouDiaria(req, res) {
+  try {
+    const { funCodigo } = req.params;
+
+    const result = await pool.query(`
+      SELECT pag_codigo, pag_valor, pag_status
+      FROM pagamentos_diaria
+      WHERE fun_codigo = $1
+        AND pag_data::date = CURRENT_DATE
+      LIMIT 1
+    `, [funCodigo]);
+
+    if (result.rows.length === 0) {
+      return res.status(200).json({
+        pagou_hoje: false,
+        diaria: null,
+        mensagem: "Nenhuma diária gerada hoje."
+      });
+    }
+
+    const diaria = result.rows[0];
+    return res.status(200).json({
+      pagou_hoje: diaria.pag_status === 'pago',
+      diaria,
+      mensagem: diaria.pag_status === 'pago' 
+                ? "Diária paga."
+                : "Diária ainda não paga."
+    });
+
+  } catch (error) {
+    console.error("Erro ao verificar diária do funcionário:", error);
+    return res.status(500).json({ erro: "Erro ao verificar diária do funcionário." });
   }
+}
+
 
 
 };
