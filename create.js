@@ -1,16 +1,15 @@
-import pool from "./src/db/db.js";
+import bcrypt from "bcrypt";
 
-async function executarConsulta() {
+async function gerarHash() {
+  const senha = "123456";
+  const saltRounds = 10; // força do hash
+
   try {
-    const res = await pool.query(`
-      select fun_documento from funcionarios
-    `);
-      console.log("Usuários encontrados:", res.rows);
+    const hash = await bcrypt.hash(senha, saltRounds);
+    console.log("Senha criptografada:", hash);
   } catch (erro) {
-    console.error("Erro ao executar SQL:", erro);
-  } finally {
-    await pool.end();
+    console.error("Erro ao gerar hash:", erro);
   }
 }
 
-executarConsulta();
+gerarHash();

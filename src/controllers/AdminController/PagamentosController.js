@@ -61,7 +61,7 @@ ORDER BY
 
                 if (rowCount === 0) {
                     await pool.query(
-                        `INSERT INTO pagamentos_diaria (fun_codigo, pag_valor, pag_data, pag_forma_pagament, pag_status)
+                        `INSERT INTO pagamentos_diaria (fun_codigo, pag_valor, pag_data, pag_forma_pagamento, pag_status)
            VALUES ($1, $2, $3, $4, $5)`,
                         [fun_codigo, 20.00, dataHoje, 'indefinido', 'pendente']
                     );
@@ -88,7 +88,7 @@ ORDER BY
     },
 
     async atualizarStatus(req, res) {
-        const { pag_status, pag_forma_pagament } = req.body;
+        const { pag_status, pag_forma_pagamento } = req.body;
         const { id } = req.params;
 
         if (!id) {
@@ -101,10 +101,10 @@ ORDER BY
         try {
             const result = await pool.query(
                 `UPDATE pagamentos_diaria 
-       SET pag_status = $1, pag_forma_pagament = COALESCE($2, pag_forma_pagament), atualizado_em = NOW()
+       SET pag_status = $1, pag_forma_pagamento = COALESCE($2, pag_forma_pagamento), atualizado_em = NOW()
        WHERE pag_codigo = $3
        RETURNING *`,
-                [pag_status, pag_forma_pagament || null, id]
+                [pag_status, pag_forma_pagamento || null, id]
             );
 
             if (result.rowCount === 0) {

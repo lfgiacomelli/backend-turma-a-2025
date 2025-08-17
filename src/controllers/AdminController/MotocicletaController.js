@@ -1,5 +1,5 @@
 import pool from '../../db/db.js';
-
+import { enviarEmail } from '../../utils/email.js';
 const MotocicletaController = {
   async listar(req, res) {
     try {
@@ -57,19 +57,17 @@ LIMIT $1 OFFSET $2
       const funNome = emailResult.rows[0]?.fun_nome;
 
       if (funEmail) {
-        await enviarEmail({
-          to: funEmail,
-          subject: 'Motocicleta cadastrada',
-          body: `Olá, ${funNome},
+        try {
+          await enviarEmail({
+            to: funEmail,
+            subject: 'Motocicleta cadastrada',
+            body: `Olá, ${funNome},
 
 A motocicleta abaixo foi cadastrada com sucesso em nosso sistema:
 
 Modelo: ${mot_modelo}
-
 Placa: ${mot_placa}
-
 Ano: ${mot_ano}
-
 Cor: ${mot_cor}
 
 Com isso, você estará apto(a) a receber solicitações de serviço, desde que esteja disponível e com todas as pendências de pagamento da diária devidamente regularizadas.
@@ -78,15 +76,17 @@ Por gentileza, revise as informações acima. Caso identifique qualquer dado inc
 
 Atenciosamente,
 Equipe ZoomX`
-        });
-      } else {
-        console.warn(`Funcionário com código ${fun_codigo} não encontrado ou sem e-mail.`);
+          });
+        } catch (emailError) {
+          console.error('Erro ao enviar e-mail:', emailError.message);
+        }
       }
+
 
       res.status(201).json(motoAdicionada);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Erro ao adicionar motocicleta' });
+      res.status(500).json({ message: 'Erro ao adicionar motocicleta', error: error.message });
     }
   },
 
