@@ -47,8 +47,9 @@ ORDER BY
 
         try {
             const { rows: funcionarios } = await pool.query(`
-        SELECT fun_codigo FROM funcionarios WHERE fun_ativo = true
-      `);
+      SELECT fun_codigo FROM funcionarios 
+      WHERE fun_ativo = true AND fun_cargo = 'Mototaxista'
+    `);
 
             let totalCriados = 0;
 
@@ -61,32 +62,28 @@ ORDER BY
                 if (rowCount === 0) {
                     await pool.query(
                         `INSERT INTO pagamentos_diaria (fun_codigo, pag_valor, pag_data, pag_forma_pagament, pag_status)
-         SELECT $1, $2, $3, $4, $5
-         FROM funcionarios
-         WHERE fun_codigo = $1
-         AND fun_cargo = 'Mototaxista'`,
+           VALUES ($1, $2, $3, $4, $5)`,
                         [fun_codigo, 20.00, dataHoje, 'indefinido', 'pendente']
                     );
-
                     totalCriados++;
                 }
-
             }
 
-            const mensagem = `Pagamentos criados com sucesso: ${totalCriados}`;
-            console.log(mensagem);
-
-            if (req && res) {
-                if (totalCriados === 0) {
-                    return res.status(204).end();
-                }
+            if (res) {
+                if (totalCriados === 0) return res.status(204).end();
                 return res.status(200).json({ sucesso: true, totalCriados, data: dataHoje });
             }
+
+            return { totalCriados, data: dataHoje };
+
         } catch (error) {
             console.error("Erro ao gerar pagamentos diários:", error);
-            if (req && res) {
-                res.status(500).json({ erro: "Erro ao gerar pagamentos diários." });
+
+            if (res) {
+                return res.status(500).json({ erro: "Erro ao gerar pagamentos diários." });
             }
+
+            throw error;
         }
     },
 
