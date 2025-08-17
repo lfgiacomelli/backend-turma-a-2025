@@ -57,7 +57,7 @@ const FotoFuncionarioController = {
 
   listarSemFoto: async (req, res) => {
     try {
-      const sql = 'SELECT fun_codigo, fun_nome FROM funcionarios WHERE fun_documento IS NULL';
+      const sql = 'SELECT fun_codigo, fun_nome FROM funcionarios WHERE fun_cargo = "Mototaxista" fun_documento IS NULL';
       const result = await pool.query(sql);
       res.json(result.rows);
     } catch (error) {
