@@ -307,8 +307,8 @@ Este é um e-mail automático. Por favor, não responda diretamente a esta mensa
   },
 
   async adicionarPushToken(req, res) {
-    const { id } = req.params;          // id do usuário na URL
-    const { pushToken } = req.body;     // token enviado no corpo JSON
+    const { id } = req.params;
+    const { pushToken } = req.body;
 
     if (!pushToken) {
       return res.status(400).json({ sucesso: false, mensagem: "Push token é obrigatório." });
