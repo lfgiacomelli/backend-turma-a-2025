@@ -111,7 +111,7 @@ const FuncionarioController = {
 
         try {
           if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath); 
+            fs.unlinkSync(filePath);
           }
         } catch (fileError) {
           console.warn('Erro ao excluir arquivo de documento:', fileError);
@@ -285,7 +285,70 @@ ORDER BY v.via_data DESC
       console.error('Erro ao listar viagens do funcionário:', error);
       res.status(500).json({ erro: 'Erro interno no servidor' });
     }
+  },
+  async viagensEmAndamento(req, res) {
+    const { id } = req.params;
+    try {
+      const result = await pool.query(`
+        SELECT 
+    v.*, 
+    u.usu_nome
+FROM viagens v
+INNER JOIN usuarios u 
+    ON v.usu_codigo = u.usu_codigo
+WHERE v.via_status = 'em andamento' 
+  AND v.fun_codigo = $1
+ORDER BY v.via_data DESC
+LIMIT 1;
+
+      `, [id]);
+
+      res.json(result.rows);
+    } catch (error) {
+      console.error('Erro ao listar viagens em andamento:', error);
+      res.status(500).json({ erro: 'Erro interno no servidor' });
+    }
+  },
+
+  async estimarGanhosDiarios(req, res) {
+    const { funCodigo } = req.params;
+
+    if (!funCodigo) {
+      return res.status(400).json({
+        status: "error",
+        message: "Código do funcionário (funCodigo) é obrigatório.",
+      });
+    }
+
+    try {
+      const result = await pool.query(
+        `
+      SELECT COALESCE(SUM(via_valor), 0) AS total_ganhos
+      FROM viagens
+      WHERE fun_codigo = $1
+        AND via_data >= CURRENT_DATE - INTERVAL '1 day'
+      `,
+        [funCodigo]
+      );
+
+      const totalGanhos = parseFloat(result.rows[0]?.total_ganhos) || 0;
+
+      return res.status(200).json({
+        status: "success",
+        data: {
+          totalGanhos,
+        },
+      });
+    } catch (error) {
+      console.error("Erro ao estimar ganhos diários:", error);
+
+      return res.status(500).json({
+        status: "error",
+        message: "Ocorreu um erro ao estimar os ganhos diários.",
+      });
+    }
   }
+
 
 };
 

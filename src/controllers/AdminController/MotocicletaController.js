@@ -126,6 +126,25 @@ Equipe ZoomX`
       console.error('Erro ao excluir motocicleta:', error);
       res.status(500).json({ erro: 'Erro interno no servidor' });
     }
+  },
+
+  async getMotorcycleById(req, res) {
+    const { funCodigo } = req.params;
+
+    try {
+      const result = await pool.query(`
+        SELECT * FROM motocicletas WHERE fun_codigo = $1
+      `, [funCodigo]);
+
+      if (result.rows.length === 0) {
+        return res.status(404).json({ mensagem: 'Motocicleta não encontrada' });
+      }
+
+      res.json(result.rows[0]);
+    } catch (error) {
+      console.error('Erro ao buscar motocicleta por ID:', error);
+      res.status(500).json({ erro: 'Erro interno no servidor' });
+    }
   }
 };
 
