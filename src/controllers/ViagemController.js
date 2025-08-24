@@ -157,7 +157,7 @@ Equipe ZoomX - Mototáxi e Entregas Rápidas
 <p>Esperamos que sua experiência com o <strong>ZoomX</strong> tenha sido excelente.</p>
 <p>Para continuarmos oferecendo um serviço de qualidade, gostaríamos de ouvir sua opinião sobre a sua última viagem.</p>
 <p>
-  <a href="zoomx://avaliar" style="display:inline-block; padding:10px 20px; background:#007bff; color:#fff; text-decoration:none; border-radius:5px;">
+  <a href="zoomx://AvaliarViagem/${viagem.via_codigo}" style="display:inline-block; padding:10px 20px; background:#007bff; color:#fff; text-decoration:none; border-radius:5px;">
     Avaliar agora
   </a>
 </p>
