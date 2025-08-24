@@ -1,15 +1,16 @@
-import bcrypt from "bcrypt";
+import pool from './src/db/db.js';
 
-async function gerarHash() {
-  const senha = "123456";
-  const saltRounds = 10; // força do hash
-
+async function criarColuna() {
   try {
-    const hash = await bcrypt.hash(senha, saltRounds);
-    console.log("Senha criptografada:", hash);
+    const result = await pool.query(`
+      ALTER TABLE viagens 
+      ADD COLUMN via_email_enviado BOOLEAN DEFAULT FALSE
+    `);
+    console.log("Coluna 'via_email_enviado' criada com sucesso!");
   } catch (erro) {
-    console.error("Erro ao gerar hash:", erro);
+    console.error("Erro ao criar coluna:", erro);
   }
 }
 
-gerarHash();
+// Executa a função
+criarColuna();
