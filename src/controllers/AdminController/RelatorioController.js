@@ -210,7 +210,10 @@ class RelatorioController {
 
   static async solicitacoesRecusadas(req, res) {
     try {
-      const sql = `SELECT * FROM solicitacoes WHERE sol_status ILIKE 'recusada'`;
+      const sql = `SELECT COUNT(*) AS total_recusadas
+        FROM solicitacoes
+        WHERE sol_status ILIKE 'recusada';
+        `;
       const { rows } = await pool.query(sql);
 
       if (!rows.length) {
