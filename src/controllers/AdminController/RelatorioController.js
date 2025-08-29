@@ -14,7 +14,6 @@ class RelatorioController {
 
       if (data_inicio > data_fim) [data_inicio, data_fim] = [data_fim, data_inicio];
 
-      // 1️⃣ Usuários
       const sqlUsuarios = `
         SELECT 
           COUNT(*) AS total,
@@ -24,7 +23,6 @@ class RelatorioController {
         FROM usuarios
       `;
 
-      // 2️⃣ Corridas
       const sqlCorridas = `
         SELECT
           COUNT(*) AS total,
@@ -172,7 +170,7 @@ class RelatorioController {
         let periodo = 'noite';
         if (hora >= 5 && hora < 12) periodo = 'manhã';
         else if (hora >= 12 && hora < 18) periodo = 'tarde';
-        return { hora: `${hora.toString().padStart(2,'0')}:00`, total: h.total_corridas, periodo };
+        return { hora: `${hora.toString().padStart(2, '0')}:00`, total: h.total_corridas, periodo };
       });
 
       return res.json({
@@ -194,7 +192,6 @@ class RelatorioController {
     }
   }
 
-  // Faturamento diário
   static async faturamentoDiario(req, res) {
     try {
       const sql = `
@@ -210,6 +207,23 @@ class RelatorioController {
       res.status(500).json({ erro: 'Erro interno ao buscar faturamento diário' });
     }
   }
+
+  static async solicitacoesRecusadas(req, res) {
+    try {
+      const sql = `SELECT * FROM solicitacoes WHERE sol_status ILIKE 'recusada'`;
+      const { rows } = await pool.query(sql);
+
+      if (!rows.length) {
+        return res.status(404).json({ solicitacoes_recusadas: [] });
+      }
+
+      return res.status(200).json({ solicitacoes_recusadas: rows });
+    } catch (error) {
+      console.error('Erro ao buscar solicitações recusadas:', error);
+      return res.status(500).json({ erro: 'Erro interno ao buscar solicitações recusadas' });
+    }
+  }
+
 }
 
 export default RelatorioController;

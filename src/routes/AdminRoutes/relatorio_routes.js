@@ -6,5 +6,6 @@ const router = express.Router();
 
 router.get('/', authMiddlewareAdmin, RelatorioController.getRelatorios);
 router.get('/faturamento', authMiddlewareAdmin, RelatorioController.faturamentoDiario);
+router.get('/recusadas', authMiddlewareAdmin, RelatorioController.solicitacoesRecusadas);
 
 export default router;
