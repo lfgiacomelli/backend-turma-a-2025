@@ -101,23 +101,6 @@ const FuncionarioController = {
     try {
       const { id } = req.params;
 
-      const { rows } = await pool.query(
-        'SELECT fun_documento FROM funcionarios WHERE fun_codigo = $1',
-        [id]
-      );
-
-      if (rows.length > 0 && rows[0].fun_documento) {
-        const filePath = path.join(__dirname, '..', '..', 'uploads', path.basename(rows[0].fun_documento));
-
-        try {
-          if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-          }
-        } catch (fileError) {
-          console.warn('Erro ao excluir arquivo de documento:', fileError);
-        }
-      }
-
       await pool.query('DELETE FROM motocicletas WHERE fun_codigo = $1', [id]);
       await pool.query('DELETE FROM funcionarios WHERE fun_codigo = $1', [id]);
 
