@@ -34,14 +34,12 @@ class RelatorioController {
         WHERE via_data::date BETWEEN $1 AND $2
       `;
 
-      // 3️⃣ Corridas canceladas
       const sqlCanceladas = `
         SELECT COUNT(*) AS canceladas
         FROM solicitacoes
         WHERE sol_status = 'recusada' AND sol_data::date BETWEEN $1 AND $2
       `;
 
-      // 4️⃣ Top usuários ativos
       const sqlUsuariosAtivos = `
         SELECT u.usu_nome, COUNT(v.via_codigo) AS total_corridas, COALESCE(SUM(v.via_valor),0) AS total_gasto
         FROM usuarios u
@@ -51,7 +49,6 @@ class RelatorioController {
         LIMIT 5
       `;
 
-      // 5️⃣ Top mototaxistas ativos
       const sqlMototaxistasAtivos = `
         SELECT
           f.fun_nome,
@@ -67,7 +64,6 @@ class RelatorioController {
         LIMIT 5
       `;
 
-      // 6️⃣ Receita mensal últimos 12 meses
       const sqlReceita = `
         SELECT TO_CHAR(via_data, 'YYYY-MM') AS mes,
                SUM(via_valor) AS total,
@@ -80,7 +76,6 @@ class RelatorioController {
         ORDER BY mes ASC
       `;
 
-      // 7️⃣ Status das corridas
       const sqlStatusCorridas = `
         SELECT via_status, COUNT(*) AS total
         FROM viagens
@@ -88,7 +83,6 @@ class RelatorioController {
         GROUP BY via_status
       `;
 
-      // 8️⃣ Horários de pico
       const sqlHorariosPico = `
         SELECT EXTRACT(HOUR FROM via_data) AS hora, COUNT(*) AS total_corridas
         FROM viagens
@@ -98,7 +92,6 @@ class RelatorioController {
         LIMIT 5
       `;
 
-      // 9️⃣ Rotas populares
       const sqlRotasPopulares = `
         SELECT via_origem || ' → ' || via_destino AS rota,
                COUNT(*) AS total_viagens,
@@ -110,7 +103,6 @@ class RelatorioController {
         LIMIT 5
       `;
 
-      // Executa todas as queries em paralelo
       const [
         usuariosResult,
         corridasResult,
@@ -137,14 +129,12 @@ class RelatorioController {
       const corridas = corridasResult.rows[0];
       const canceladas = canceladasResult.rows[0];
 
-      // Ajusta valores null
       corridas.finalizadas = parseInt(corridas.finalizadas || 0, 10);
       corridas.em_andamento = parseInt(corridas.em_andamento || 0, 10);
       corridas.valor_medio = parseFloat(corridas.valor_medio || 0).toFixed(2);
       corridas.faturamento_total = parseFloat(corridas.faturamento_total || 0).toFixed(2);
       corridas.canceladas = parseInt(canceladas.canceladas || 0, 10);
 
-      // Receita mensal
       const receitaMensal = receitaResult.rows;
       const labelsMeses = receitaMensal.map(item => {
         const [ano, mes] = item.mes.split('-');
@@ -153,7 +143,6 @@ class RelatorioController {
       const valoresReceita = receitaMensal.map(item => parseFloat(item.total));
       const valoresCorridas = receitaMensal.map(item => parseInt(item.total_corridas, 10));
 
-      // Status corridas
       const statusCorridas = statusCorridasResult.rows;
       const labelsStatus = statusCorridas.map(item => item.via_status.charAt(0).toUpperCase() + item.via_status.slice(1));
       const valoresStatus = statusCorridas.map(item => parseInt(item.total, 10));
@@ -164,7 +153,6 @@ class RelatorioController {
         'pendente': 'rgba(108, 117, 125, 0.8)'
       };
 
-      // Horários de pico
       const horariosPico = horariosPicoResult.rows.map(h => {
         const hora = h.hora;
         let periodo = 'noite';

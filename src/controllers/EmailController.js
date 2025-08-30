@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { enviarEmail } from '../utils/email.js';
-// import pool from '../db/db.js';
 
 export const EmailSchema = z.object({
     name: z.string().min(1, "Nome é obrigatório"),
@@ -60,11 +59,6 @@ ${data.message}
                 text: textoEmail,
                 html: htmlEmail,
             });
-
-            //   const result = await pool.query(
-            //     'INSERT INTO emails_contratacao (ema_nome, ema_email, ema_telefone, ema_empresa, ema_endereco_empresa, ema_numero, ema_bairro, ema_mensagem) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-            //     [data.name, data.email, data.phone, data.company, data.address_company, data.address_number, data.bairro, data.message]
-            //   );
 
             res.status(200).json({
                 success: true,
