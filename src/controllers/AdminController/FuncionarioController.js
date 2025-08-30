@@ -98,19 +98,35 @@ const FuncionarioController = {
   },
 
   async excluir(req, res) {
+    const client = await pool.connect();
     try {
       const { id } = req.params;
 
-      await pool.query('DELETE FROM motocicletas WHERE fun_codigo = $1', [id]);
-      await pool.query('DELETE FROM funcionarios WHERE fun_codigo = $1', [id]);
+      await client.query('BEGIN');
 
-      res.json({ mensagem: 'Funcionário excluído com sucesso!' });
+      await client.query('DELETE FROM pagamentos_diaria WHERE fun_codigo = $1', [id]);
+      await client.query('DELETE FROM motocicletas WHERE fun_codigo = $1', [id]);
+
+      const result = await client.query(
+        'DELETE FROM funcionarios WHERE fun_codigo = $1 RETURNING *',
+        [id]
+      );
+
+      await client.query('COMMIT');
+
+      if (result.rowCount === 0) {
+        return res.status(404).json({ erro: 'Funcionário não encontrado' });
+      }
+
+      return res.json({ mensagem: 'Funcionário excluído com sucesso!' });
     } catch (error) {
+      await client.query('ROLLBACK');
       console.error('Erro ao excluir funcionário:', error);
-      res.status(500).json({ erro: 'Erro interno no servidor' });
+      return res.status(500).json({ erro: error.message });
+    } finally {
+      client.release();
     }
   },
-
   async listar(req, res) {
     try {
       const query = `
@@ -332,11 +348,11 @@ LIMIT 1;
     }
   },
 
- async verificarSeFuncionarioPagouDiaria(req, res) {
-  try {
-    const { funCodigo } = req.params;
+  async verificarSeFuncionarioPagouDiaria(req, res) {
+    try {
+      const { funCodigo } = req.params;
 
-    const result = await pool.query(`
+      const result = await pool.query(`
       SELECT pag_codigo, pag_valor, pag_status
       FROM pagamentos_diaria
       WHERE fun_codigo = $1
@@ -344,28 +360,28 @@ LIMIT 1;
       LIMIT 1
     `, [funCodigo]);
 
-    if (result.rows.length === 0) {
+      if (result.rows.length === 0) {
+        return res.status(200).json({
+          pagou_hoje: false,
+          diaria: null,
+          mensagem: "Nenhuma diária gerada hoje."
+        });
+      }
+
+      const diaria = result.rows[0];
       return res.status(200).json({
-        pagou_hoje: false,
-        diaria: null,
-        mensagem: "Nenhuma diária gerada hoje."
+        pagou_hoje: diaria.pag_status === 'pago',
+        diaria,
+        mensagem: diaria.pag_status === 'pago'
+          ? "Diária paga."
+          : "Diária ainda não paga."
       });
+
+    } catch (error) {
+      console.error("Erro ao verificar diária do funcionário:", error);
+      return res.status(500).json({ erro: "Erro ao verificar diária do funcionário." });
     }
-
-    const diaria = result.rows[0];
-    return res.status(200).json({
-      pagou_hoje: diaria.pag_status === 'pago',
-      diaria,
-      mensagem: diaria.pag_status === 'pago' 
-                ? "Diária paga."
-                : "Diária ainda não paga."
-    });
-
-  } catch (error) {
-    console.error("Erro ao verificar diária do funcionário:", error);
-    return res.status(500).json({ erro: "Erro ao verificar diária do funcionário." });
   }
-}
 
 
 
