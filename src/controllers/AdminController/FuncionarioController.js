@@ -196,23 +196,20 @@ WHERE f.fun_ativo = TRUE
   async verificarFuncionariosSemMoto(req, res) {
     try {
       const result = await pool.query(`
-            SELECT f.fun_codigo, f.fun_nome, f.fun_cargo
-            FROM funcionarios f
-            LEFT JOIN motocicletas m ON f.fun_codigo = m.fun_codigo
-            WHERE m.fun_codigo IS NULL
-              AND f.fun_cargo = 'Mototaxista';
-        `);
+      SELECT f.fun_codigo, f.fun_nome
+      FROM funcionarios f
+      LEFT JOIN motocicletas m ON f.fun_codigo = m.fun_codigo
+      WHERE m.fun_codigo IS NULL
+        AND f.fun_cargo ILIKE 'mototaxista';
+    `);
 
       const funcionariosSemMoto = result.rows;
 
       if (funcionariosSemMoto.length === 0) {
-        return res.status(200).json({ mensagem: "Todos os Mototaxistas têm motos cadastradas." });
+        return res.status(204).send();
       }
 
-      return res.status(200).json({
-        mensagem: "Mototaxistas sem motos cadastradas.",
-        funcionarios: funcionariosSemMoto
-      });
+      return res.status(200).json(funcionariosSemMoto);
     } catch (error) {
       console.error("Erro ao verificar funcionários sem moto:", error);
       return res.status(500).json({ erro: "Erro ao verificar funcionários sem moto." });
