@@ -1,14 +1,14 @@
-import pool from './src/db/db.js';
+import pool from "./src/db/db.js";
 
-async function criarColuna() {
+async function inserirSolicitacoesMotoTaxi() {
   try {
-    const result = await pool.query(`
-      update funcionarios set fun_documento = null
+    const result = await pool.query(`SELECT via_servico from viagens WHERE via_servico ILIKE 'entrega'
     `);
-    console.log("Coluna 'fun_documento' atualizada com sucesso!");
+
+    console.log(result.rows);
   } catch (erro) {
-    console.error("Erro ao criar coluna:", erro);
+    console.error("Erro ao inserir solicitações:", erro);
   }
 }
 
-criarColuna();
+inserirSolicitacoesMotoTaxi();

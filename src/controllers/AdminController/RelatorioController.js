@@ -214,6 +214,18 @@ class RelatorioController {
       return res.status(500).json({ erro: 'Erro interno ao buscar solicitações recusadas' });
     }
   }
+  static async getEntregasCount(req, res) {
+    try {
+      const result = await pool.query(
+        `SELECT COUNT(*) AS total FROM viagens WHERE via_servico ILIKE 'entrega'`
+      );
+      const rows = result.rows;
+      return res.status(200).json({ total_entregas: parseInt(rows[0].total, 10) });
+    } catch (error) {
+      console.error('Erro ao buscar total de entregas:', error);
+      return res.status(500).json({ erro: 'Erro interno ao buscar total de entregas' });
+    }
+  }
 
 }
 

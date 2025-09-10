@@ -7,21 +7,18 @@ const MotocicletaController = {
       const offset = (pagina - 1) * limite;
 
       const query = `
-  SELECT 
-  m.mot_codigo, 
-  m.mot_modelo, 
-  m.mot_placa, 
-  m.mot_ano, 
-  m.mot_cor, 
-  m.fun_codigo,
-  f.fun_nome
-FROM motocicletas m
-INNER JOIN funcionarios f ON m.fun_codigo = f.fun_codigo
-ORDER BY m.mot_modelo
-LIMIT $1 OFFSET $2
-
-`;
-
+          SELECT 
+          m.mot_codigo, 
+          m.mot_modelo, 
+          m.mot_placa, 
+          m.mot_ano, 
+          m.mot_cor, 
+          m.fun_codigo,
+          f.fun_nome
+        FROM motocicletas m
+        INNER JOIN funcionarios f ON m.fun_codigo = f.fun_codigo
+        ORDER BY m.mot_modelo
+        LIMIT $1 OFFSET $2`;
 
       const result = await pool.query(query, [limite, offset]);
 
@@ -61,21 +58,20 @@ LIMIT $1 OFFSET $2
           await enviarEmail({
             to: funEmail,
             subject: 'Motocicleta cadastrada',
-            body: `Olá, ${funNome},
+            text: ` Olá, ${funNome},
+                    A motocicleta abaixo foi cadastrada com sucesso em nosso sistema:
+                    Modelo: ${mot_modelo}
+                    Placa: ${mot_placa}
+                    Ano: ${mot_ano}
+                    Cor: ${mot_cor}
 
-A motocicleta abaixo foi cadastrada com sucesso em nosso sistema:
+                    Com isso, você estará apto(a) a receber solicitações de serviço, desde que esteja disponível e com todas as pendências de pagamento da diária devidamente regularizadas.
 
-Modelo: ${mot_modelo}
-Placa: ${mot_placa}
-Ano: ${mot_ano}
-Cor: ${mot_cor}
+                    Por gentileza, revise as informações acima. Caso identifique qualquer dado incorreto, entre em contato com a equipe de gestão para realizar as devidas correções.
 
-Com isso, você estará apto(a) a receber solicitações de serviço, desde que esteja disponível e com todas as pendências de pagamento da diária devidamente regularizadas.
-
-Por gentileza, revise as informações acima. Caso identifique qualquer dado incorreto, entre em contato com a equipe de gestão para realizar as devidas correções.
-
-Atenciosamente,
-Equipe ZoomX`
+                    Atenciosamente,
+                    Equipe ZoomX
+                  `
           });
         } catch (emailError) {
           console.error('Erro ao enviar e-mail:', emailError.message);

@@ -23,7 +23,6 @@ const PushNotifications = {
       return res.status(400).json({ message: "Nenhuma mensagem para enviar" });
     }
 
-    // Filtra apenas tokens válidos do Expo
     const validMessages = messages.filter(m => Expo.isExpoPushToken(m.token));
     if (validMessages.length === 0) {
       return res.status(400).json({ message: "Nenhuma mensagem com token válido" });
