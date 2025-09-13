@@ -9,9 +9,7 @@ const UsuarioController = {
       const result = await pool.query(
         `SELECT usu_codigo, usu_nome, usu_email, usu_ativo, usu_telefone 
          FROM usuarios 
-         ORDER BY usu_nome 
-         LIMIT $1 OFFSET $2`,
-        [limite, offset]
+         ORDER BY usu_nome`
       );
 
       res.json(result.rows);
