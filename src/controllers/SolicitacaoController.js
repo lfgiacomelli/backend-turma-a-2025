@@ -22,7 +22,7 @@ const SolicitacaoController = {
         try {
             const data = SolicitacaoSchema.parse(req.body);
 
-            if (data.sol_servico === 'Moto Táxi') {
+            if (data.sol_servico.toLocaleLowerCase() === 'mototáxi') {
                 data.sol_largura = null;
                 data.sol_comprimento = null;
                 data.sol_peso = null;
