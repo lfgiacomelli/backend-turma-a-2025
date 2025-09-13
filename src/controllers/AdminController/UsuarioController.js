@@ -6,9 +6,6 @@ import pool from '../../db/db.js';
 const UsuarioController = {
   async listar(req, res) {
     try {
-      const { pagina = 1, limite = 10 } = req.query;
-      const offset = (pagina - 1) * limite;
-
       const result = await pool.query(
         `SELECT usu_codigo, usu_nome, usu_email, usu_ativo, usu_telefone 
          FROM usuarios 
