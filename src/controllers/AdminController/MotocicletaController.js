@@ -3,8 +3,6 @@ import { enviarEmail } from '../../utils/email.js';
 const MotocicletaController = {
   async listar(req, res) {
     try {
-      const { pagina = 1, limite = 10 } = req.query;
-      const offset = (pagina - 1) * limite;
 
       const query = `
           SELECT 
@@ -17,10 +15,9 @@ const MotocicletaController = {
           f.fun_nome
         FROM motocicletas m
         INNER JOIN funcionarios f ON m.fun_codigo = f.fun_codigo
-        ORDER BY m.mot_modelo
-        LIMIT $1 OFFSET $2`;
+        ORDER BY m.mot_modelo`;
 
-      const result = await pool.query(query, [limite, offset]);
+      const result = await pool.query(query);
 
       res.json(result.rows);
     }
