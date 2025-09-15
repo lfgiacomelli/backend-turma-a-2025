@@ -88,47 +88,28 @@ const UsuarioController = {
         await enviarEmail({
           to: usuario.usu_email,
           subject: 'Seja bem-vindo ao ZoomX!',
-          text: `
-                Hey, ${usuario.usu_nome}!
-
-                Seja muito bem-vindo ao ZoomX - Mototáxi e entregas rápidas!
-
-                Sua conta foi criada com sucesso e você já pode começar a usar o aplicativo.
-                Com o ZoomX, a praticidade é garantida para suas viagens e entregas.
-                Para começar, basta abrir o app e fazer seu primeiro pedido.
-
-
-                Atenciosamente,  
-                Equipe ZoomX - Mototáxi e Entregas Rápidas
-       `,
           html: `
-  <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 30px; color: #333;">
-    <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-      <h2 style="color: #00c853;">🎉 Bem-vindo ao ZoomX!</h2>
+            <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 30px; color: #333;">
+              <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                <h2 style="color: #00c853;">🎉 Bem-vindo ao ZoomX!</h2>
 
-      <p>Olá, <strong>${usuario.usu_nome}</strong>!</p>
+                <p>Olá, <strong>${usuario.usu_nome}</strong>!</p>
 
-      <p>Estamos muito felizes em ter você com a gente! 😊</p>
+                <p>Estamos muito felizes em ter você com a gente! 😊</p>
 
-      <p>Com o <strong>ZoomX</strong>, você tem uma solução prática e rápida para suas corridas e entregas pela cidade.</p>
+                <p>Com o <strong>ZoomX</strong>, você tem uma solução prática e rápida para suas corridas e entregas pela cidade.</p>
 
-      <p>Sua conta foi criada com sucesso e você já pode começar a usar o app agora mesmo.</p>
+                <p>Sua conta foi criada com sucesso e você já pode começar a usar o app agora mesmo.</p>
+                
+                <p>Se tiver qualquer dúvida ou precisar de ajuda, nossa equipe está sempre à disposição.</p>
 
-      <div style="text-align: center; margin: 30px 0;">
-        <a href="zoomx://Home" style="background-color: #00c853; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
-          🚀 Abrir o aplicativo
-        </a>
-      </div>
+                <p>Obrigado por escolher o ZoomX! 🙌</p>
 
-      <p>Se tiver qualquer dúvida ou precisar de ajuda, nossa equipe está sempre à disposição.</p>
+                <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;" />
 
-      <p>Obrigado por escolher o ZoomX! 🙌</p>
-
-      <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;" />
-
-      <p style="font-size: 14px; color: #999;">Equipe ZoomX - Mototáxi e Entregas Rápidas</p>
-    </div>
-  </div>
+                <p style="font-size: 14px; color: #999;">Equipe ZoomX - Mototáxi e Entregas Rápidas</p>
+              </div>
+            </div>
 `
 
         });

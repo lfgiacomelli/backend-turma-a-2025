@@ -8,11 +8,11 @@ const ViagemSchema = z.object({
     via_origem: z.string().min(1, "Origem é obrigatória"),
     via_destino: z.string().min(1, "Destino é obrigatório"),
     via_atendenteCodigo: z.string().uuid({ message: "Código do atendente inválido" }).optional(),
-    usu_codigo: z.string().uuid({ message: "ID do usuário inválido" }).optional(), 
+    usu_codigo: z.string().uuid({ message: "ID do usuário inválido" }).optional(),
     via_formapagamento: z.string().min(1, "Forma de pagamento é obrigatória").optional(),
     via_observacoes: z.string().max(500, "Observações não podem exceder 500 caracteres").optional(),
     via_servico: z.string().min(1, "Serviço é obrigatório"),
-    via_status: z.enum(['Pendente', 'Aprovada', 'Rejeitada', 'finalizada']), 
+    via_status: z.enum(['Pendente', 'Aprovada', 'Rejeitada', 'finalizada']),
     via_data: z.preprocess(arg => {
         if (typeof arg === 'string' || arg instanceof Date) return new Date(arg);
         return arg;
@@ -91,7 +91,7 @@ const ViagemController = {
 
         } catch (error) {
             console.error('Erro ao buscar funcionário:', error);
-            return res.status(500).json({   
+            return res.status(500).json({
                 sucesso: false,
                 mensagem: 'Erro interno no servidor.',
                 detalhes: error.message
@@ -136,37 +136,71 @@ const ViagemController = {
             await enviarEmail({
                 to: viagem.usu_email,
                 subject: 'Ajude-nos a melhorar: Avalie sua última viagem no ZoomX!',
-                text: `
-Olá, ${viagem.usu_nome}!
-
-Esperamos que sua experiência com o ZoomX tenha sido excelente.
-
-Para continuarmos oferecendo um serviço de qualidade, gostaríamos de ouvir sua opinião sobre a sua última viagem.
-
-Basta abrir o app e avaliar — um pop-up estará disponível na tela inicial para facilitar o processo.
-
-Sua avaliação faz toda a diferença para que possamos melhorar cada vez mais.
-
-Obrigado por escolher o ZoomX!
-
-Atenciosamente,
-Equipe ZoomX - Mototáxi e Entregas Rápidas
-      `,
                 html: `
-<p>Olá, <strong>${viagem.usu_nome}</strong>!</p>
-<p>Esperamos que sua experiência com o <strong>ZoomX</strong> tenha sido excelente.</p>
-<p>Para continuarmos oferecendo um serviço de qualidade, gostaríamos de ouvir sua opinião sobre a sua última viagem.</p>
-<p>
-  <a href="zoomx://AvaliarViagem/${viagem.via_codigo}" style="display:inline-block; padding:10px 20px; background:#007bff; color:#fff; text-decoration:none; border-radius:5px;">
-    Avaliar agora
-  </a>
-</p>
-<p>Ao abrir o app, você verá um pop-up na tela inicial para facilitar sua avaliação.</p>
-<p>Sua opinião faz toda a diferença para que possamos melhorar cada vez mais.</p>
-<p>Obrigado por escolher o ZoomX!</p>
-<p><em>Equipe ZoomX - Mototáxi e Entregas Rápidas</em></p>
-      `
+                    <!DOCTYPE html>
+                    <html lang="pt-BR">
+                    <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width,initial-scale=1">
+                    <title>Avalie sua viagem</title>
+                    </head>
+                    <body style="margin:0;padding:0;background:#f4f6f8;font-family:Arial,sans-serif;">
+                    <center style="width:100%;padding:30px 12px;">
+                        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;background:#ffffff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                        <tr>
+                            <td style="padding:25px 20px;text-align:center;">
+                            <h2 style="margin:0 0 12px 0;color:#111827;font-size:22px;">Olá, <span style="color:#007bff;">${viagem.usu_nome}</span>!</h2>
+                            <p style="margin:0 0 18px 0;color:#444;font-size:15px;line-height:1.5;">
+                                Esperamos que sua experiência com o <strong>ZoomX</strong> tenha sido excelente 🚀.  
+                                Para continuarmos oferecendo um serviço de qualidade, gostaríamos de ouvir sua opinião sobre a sua última viagem.
+                            </p>
+
+                            <!-- Estrelas -->
+                            <div style="margin:20px 0;">
+                                <table role="presentation" cellpadding="0" cellspacing="0" align="center">
+                                <tr>
+                                    ${[1, 2, 3, 4, 5].map(num => `
+                                    <td style="padding:0 4px;">
+                                        <a href="zoomx://AvaliarViagem/${viagem.via_codigo}?rating=${num}" target="_blank" style="text-decoration:none;">
+                                        <span style="font-size:32px;color:#ffcc00;">★</span>
+                                        </a>
+                                    </td>
+                                    `).join('')}
+                                </tr>
+                                </table>
+                                <p style="margin:8px 0 0 0;font-size:13px;color:#666;">Clique em uma estrela para avaliar</p>
+                            </div>
+
+                            <!-- Botão -->
+                            <div style="margin:20px 0;">
+                                <a href="zoomx://AvaliarViagem/${viagem.via_codigo}" target="_blank"
+                                style="display:inline-block;padding:12px 28px;background:#007bff;color:#fff;font-size:15px;font-weight:bold;text-decoration:none;border-radius:6px;">
+                                Avaliar agora
+                                </a>
+                            </div>
+
+                            <p style="margin:16px 0 0 0;font-size:14px;color:#555;line-height:1.5;">
+                                Ao abrir o app, você verá um pop-up na tela inicial para facilitar sua avaliação.<br>
+                                Sua opinião faz toda a diferença para que possamos melhorar cada vez mais 🙌
+                            </p>
+
+                            <hr style="border:none;border-top:1px solid #eee;margin:25px 0;">
+
+                            <p style="margin:0;font-size:13px;color:#777;">
+                                Obrigado por escolher o ZoomX!<br>
+                                <em>Equipe ZoomX - Mototáxi e Entregas Rápidas</em>
+                            </p>
+                            </td>
+                        </tr>
+                        </table>
+                        <p style="font-size:11px;color:#aaa;margin-top:10px;">
+                        Este é um e-mail automático. Por favor, não responda.
+                        </p>
+                    </center>
+                    </body>
+                    </html>`
             });
+
 
             await pool.query(
                 `UPDATE viagens SET via_email_enviado = TRUE WHERE via_codigo = $1`,
