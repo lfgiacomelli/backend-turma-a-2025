@@ -226,6 +226,23 @@ class RelatorioController {
       return res.status(500).json({ erro: 'Erro interno ao buscar total de entregas' });
     }
   }
+  static async getTotalPagosViaPix(req, res) {
+    try {
+      const result = await pool.query(`
+      SELECT COALESCE(SUM(pix_valor), 0) AS total_pago_pix
+      FROM pix_pagamentos
+      WHERE pix_status = 'accepted'
+    `);
+
+      const total = Number(result.rows[0]?.total_pago_pix || 0);
+
+      return res.status(200).json({ total_pago_pix: total });
+    } catch (error) {
+      console.error('Erro ao buscar total de pagamentos via Pix:', error);
+      return res.status(500).json({ erro: 'Erro interno ao buscar total de pagamentos via Pix' });
+    }
+  }
+
 
 }
 

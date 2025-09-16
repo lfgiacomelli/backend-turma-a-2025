@@ -8,5 +8,6 @@ router.get('/', authMiddlewareAdmin, RelatorioController.getRelatorios);
 router.get('/faturamento', authMiddlewareAdmin, RelatorioController.faturamentoDiario);
 router.get('/recusadas', authMiddlewareAdmin, RelatorioController.solicitacoesRecusadas);
 router.get('/entregas', authMiddlewareAdmin, RelatorioController.getEntregasCount);
+router.get('/pagamentos-pix', authMiddlewareAdmin, RelatorioController.getTotalPagosViaPix);
 
 export default router;

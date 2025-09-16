@@ -14,6 +14,7 @@ router.get('/listar-sem-moto', authMiddlewareAdmin,FuncionarioController.verific
 router.get('/viagens-em-andamento/:id', authMiddlewareAdmin, FuncionarioController.viagensEmAndamento);
 router.get('/ganhos-diarios/:funCodigo', authMiddlewareAdmin, FuncionarioController.estimarGanhosDiarios);
 router.get('/pagou-hoje/:funCodigo', authMiddlewareAdmin, FuncionarioController.verificarSeFuncionarioPagouDiaria);
+router.get('/nota-media/:funCodigo', authMiddlewareAdmin, FuncionarioController.calcularNota);
 
 router.post('/adicionar', authMiddlewareAdmin, FuncionarioController.adicionar);
 

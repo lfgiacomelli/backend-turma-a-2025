@@ -378,8 +378,42 @@ LIMIT 1;
       console.error("Erro ao verificar diária do funcionário:", error);
       return res.status(500).json({ erro: "Erro ao verificar diária do funcionário." });
     }
-  }
+  },
 
+  async calcularNota(req, res) {
+    try {
+      const { funCodigo } = req.params;
+
+      const result = await pool.query(
+        `
+      SELECT 
+          f.fun_codigo,
+          f.fun_nome,
+          ROUND(AVG(a.ava_nota)::numeric, 2) AS nota_media
+      FROM funcionarios f
+      LEFT JOIN viagens v ON f.fun_codigo = v.fun_codigo
+      LEFT JOIN avaliacoes a ON v.via_codigo = a.via_codigo
+      WHERE f.fun_codigo = $1
+      GROUP BY f.fun_codigo, f.fun_nome;
+      `,
+        [funCodigo]
+      );
+
+      if (result.rows.length === 0) {
+        return res.status(404).json({ message: "Funcionário não encontrado" });
+      }
+
+      const funcionario = result.rows[0];
+
+      if (funcionario.nota_media === null) {
+        funcionario.nota_media = "Sem avaliações";
+      }
+      return res.status(200).json(funcionario);
+    } catch (error) {
+      console.error("Erro ao calcular nota do funcionário:", error);
+      return res.status(500).json({ error: "Erro ao calcular nota do funcionário" });
+    }
+  }
 
 
 };
