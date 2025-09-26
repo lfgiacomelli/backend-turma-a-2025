@@ -111,25 +111,27 @@ const ViagemController = {
 
         try {
             const result = await pool.query(
-                `SELECT v.via_codigo,
-                        v.via_data,
-                        v.via_status,
-                        u.usu_nome,
-                        u.usu_email,
-                        f.fun_nome
-                    FROM viagens v
-                        JOIN usuarios u 
-                        ON v.usu_codigo = u.usu_codigo
-                        LEFT JOIN avaliacoes a 
-                        ON a.via_codigo = v.via_codigo
-                        LEFT JOIN funcionarios f
-                        ON f.fun_codigo = v.fun_codigo
-                        WHERE v.usu_codigo = $1
-                        AND v.via_status = 'finalizada'
-                        AND a.via_codigo IS NULL
-                        AND (v.via_email_enviado IS NULL OR v.via_email_enviado = FALSE)
-                        ORDER BY v.via_data DESC
-                        LIMIT 1;
+                `
+                    SELECT v.via_codigo,
+       v.via_data,
+       v.via_status,
+       u.usu_nome,
+       u.usu_email,
+       f.fun_nome
+FROM viagens v
+JOIN usuarios u 
+  ON v.usu_codigo = u.usu_codigo
+LEFT JOIN avaliacoes a 
+  ON a.via_codigo = v.via_codigo
+LEFT JOIN funcionarios f
+  ON f.fun_codigo = v.fun_codigo
+WHERE v.usu_codigo = $1
+  AND v.via_status = 'finalizada'
+  AND a.via_codigo IS NULL
+  AND (v.via_email_enviado IS NULL OR v.via_email_enviado = FALSE)
+ORDER BY v.via_data DESC
+LIMIT 1;
+
                 `,
                 [id]
             );

@@ -55,7 +55,6 @@ server.use('/api/payments', routesPayment);
 server.use('/api/enderecos', routesAddress);
 server.use('/api/email', routesEmail);
 
-
 server.use('/api/admin/usuarios', routesAdminUsuario);
 server.use('/api/admin/solicitacoes', routesAdminSolicitacao);
 server.use('/api/admin/viagens', routesAdminViagem);
