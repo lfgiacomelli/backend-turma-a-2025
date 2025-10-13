@@ -59,7 +59,6 @@ const PushNotifications = {
         tickets.push(...ticketChunk);
       }
 
-      // Recebendo os receipts
       const receiptIds = tickets
         .filter(ticket => ticket.id)
         .map(ticket => ticket.id);

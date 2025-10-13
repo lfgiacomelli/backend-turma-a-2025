@@ -10,5 +10,6 @@ router.get('/solicitacao/:solicitacaoId/funcionario', authMiddleware, ViagemCont
 router.get('/andamento/:id', authMiddleware, ViagemController.verificarUltimaViagem);
 router.get('/viagem/:id', authMiddleware, ViagemController.getViagemById);
 router.get('/naoavaliada/:id', authMiddleware, ViagemController.getUltimaViagemNaoAvaliada);
+router.get('/distancia/:id', authMiddleware, ViagemController.getSumDistanciaByUsuario);
 
 export default router;
