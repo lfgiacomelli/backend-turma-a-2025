@@ -302,6 +302,32 @@ LIMIT 1;
             return res.status(500).json({ sucesso: false, mensagem: 'Erro interno no servidor.', detalhes: error.message });
         }
     },
+    async getSumDistanciaByUsuario(req, res) {
+        try {
+            const { id } = req.params;
+
+            // Validação simples
+            if (!id || isNaN(id)) {
+                return res.status(400).json({ erro: 'ID de usuário inválido.' });
+            }
+
+            const sql = `
+                    SELECT COALESCE(SUM(sol_distancia), 0) AS total_distancia
+                    FROM solicitacoes
+                    WHERE usu_codigo = $1 AND sol_status = 'aceita' AND sol_distancia IS NOT NULL
+            `;
+
+            const { rows } = await pool.query(sql, [id]);
+
+            return res.status(200).json({
+                total_distancia: Number(rows[0].total_distancia)
+            });
+        } catch (error) {
+            console.error(`Erro ao buscar soma de distâncias para usuário ${req.params.id}:`, error);
+            return res.status(500).json({ erro: 'Erro interno ao buscar soma de distâncias.' });
+        }
+    }
+
 };
 
 export default ViagemController;

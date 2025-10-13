@@ -214,30 +214,6 @@ LIMIT $${idx++} OFFSET $${idx++}
       console.error('Erro ao finalizar todas as viagens:', error);
       return res.status(500).json({ erro: 'Erro ao finalizar viagens.' });
     }
-  },
-  async getSumDistanciaByUsuario(req, res) {
-    try {
-      const { id } = req.params;
-
-      if (!id || isNaN(id)) {
-        return res.status(400).json({ erro: 'ID de usuário inválido.' });
-      }
-
-      const sql = `
-      SELECT COALESCE(SUM(via_distancia), 0) AS total_distancia
-      FROM viagens
-      WHERE usu_codigo = $1 AND via_distancia IS NOT NULL
-    `;
-
-      const { rows } = await pool.query(sql, [id]);
-
-      return res.status(200).json({
-        total_distancia: Number(rows[0].total_distancia)
-      });
-    } catch (error) {
-      console.error(`Erro ao buscar soma de distâncias para usuário ${req.params.id}:`, error);
-      return res.status(500).json({ erro: 'Erro interno ao buscar soma de distâncias.' });
-    }
   }
 
 };
