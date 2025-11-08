@@ -58,27 +58,27 @@ router.post('/', async (req, res) => {
       { expiresIn: '30d' }
     );
 
-//     await enviarEmail({
-//       to: usuario.usu_email,
-//       subject: 'Novo login detectado na sua conta ZoomX',
-//       text: `Olá, ${usuario.usu_nome}!
+    await enviarEmail({
+      to: usuario.usu_email,
+      subject: 'Novo login detectado na sua conta ZoomX',
+      text: `Olá, ${usuario.usu_nome}!
 
-// Acabamos de notar um novo acesso na sua conta ZoomX.
+Acabamos de notar um novo acesso na sua conta ZoomX.
 
-// Se foi você, tudo certo — pode continuar aproveitando nossos serviços normalmente.
+Se foi você, tudo certo — pode continuar aproveitando nossos serviços normalmente.
 
-// Mas, se você não reconhece esse login, não se preocupe! Recomendamos que altere sua senha o quanto antes e, se precisar, entre em contato com nosso suporte para ajudarmos.
+Mas, se você não reconhece esse login, não se preocupe! Recomendamos que altere sua senha o quanto antes e, se precisar, entre em contato com nosso suporte para ajudarmos.
 
-// E-mail de suporte: support@zoomx.com.br
+E-mail de suporte: support@zoomx.com.br
 
-// Obrigado por utilizar nossos serviços!
+Obrigado por utilizar nossos serviços!
 
-// Este é um email automático, por favor não responda.
+Este é um email automático, por favor não responda.
 
-// Um abraço,
-// Equipe ZoomX - Mototáxi e Entregas Rápidas
-// `,
-//     });
+Um abraço,
+Equipe ZoomX - Mototáxi e Entregas Rápidas
+`,
+    });
 
     res.json({
       sucesso: true,

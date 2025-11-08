@@ -84,59 +84,59 @@ class PaymentController {
                     sol_servico,
                 ]
             );
-//             await enviarEmail({
-//                 to: usu_email,
-//                 subject: 'Seu QR Code de Pagamento ZoomX',
-//                 text: `Olá ${usu_nome}! Seu QR Code de pagamento já foi e está disponível para realizar o pagamento de R$ ${sol_valor} referente ao serviço de ${sol_servico} em nosso aplicativo.\n\nVocê pode acessar o QR Code através do seguinte link: 
-//   ${paymentData.point_of_interaction?.transaction_data?.ticket_url}
-//   \n\nAgradecemos por escolher o ZoomX!`,
-//                 html: `
-//                 <!doctype html>
-//                     <html lang="pt-BR">
-//                     <head>
-//                     <meta charset="utf-8" />
-//                     <meta name="viewport" content="width=device-width,initial-scale=1" />
-//                     <title>Seu QR Code de Pagamento</title>
-//                     </head>
-//                     <body style="margin:0;padding:0;background:#f4f6f8;font-family:Arial,sans-serif;">
-//                     <center style="width:100%;padding:20px 0;">
-//                         <table role="presentation" width="100%" style="max-width:600px;background:#fff;border-radius:8px;padding:20px;">
-//                         <tr>
-//                             <td>
-//                             <h2 style="margin:0 0 10px 0;color:#111827;">Olá ${usu_nome},</h2>
-//                             <p style="margin:0 0 15px 0;color:#333;">Seu QR Code de pagamento já está disponível para realizar o pagamento de:</p>
-//                             <p style="font-size:20px;font-weight:bold;color:#111827;margin:0 0 8px 0;">R$ ${sol_valor}</p>
-//                             <p style="margin:0 0 20px 0;color:#111827;">Serviço: ${sol_servico}</p>
+            await enviarEmail({
+                to: usu_email,
+                subject: 'Seu QR Code de Pagamento ZoomX',
+                text: `Olá ${usu_nome}! Seu QR Code de pagamento já foi e está disponível para realizar o pagamento de R$ ${sol_valor} referente ao serviço de ${sol_servico} em nosso aplicativo.\n\nVocê pode acessar o QR Code através do seguinte link: 
+  ${paymentData.point_of_interaction?.transaction_data?.ticket_url}
+  \n\nAgradecemos por escolher o ZoomX!`,
+                html: `
+                <!doctype html>
+                    <html lang="pt-BR">
+                    <head>
+                    <meta charset="utf-8" />
+                    <meta name="viewport" content="width=device-width,initial-scale=1" />
+                    <title>Seu QR Code de Pagamento</title>
+                    </head>
+                    <body style="margin:0;padding:0;background:#f4f6f8;font-family:Arial,sans-serif;">
+                    <center style="width:100%;padding:20px 0;">
+                        <table role="presentation" width="100%" style="max-width:600px;background:#fff;border-radius:8px;padding:20px;">
+                        <tr>
+                            <td>
+                            <h2 style="margin:0 0 10px 0;color:#111827;">Olá ${usu_nome},</h2>
+                            <p style="margin:0 0 15px 0;color:#333;">Seu QR Code de pagamento já está disponível para realizar o pagamento de:</p>
+                            <p style="font-size:20px;font-weight:bold;color:#111827;margin:0 0 8px 0;">R$ ${sol_valor}</p>
+                            <p style="margin:0 0 20px 0;color:#111827;">Serviço: ${sol_servico}</p>
 
-//                             <div style="text-align:center;margin:20px 0;">
-//                                 <a href="${paymentData.point_of_interaction?.transaction_data?.ticket_url}" target="_blank" style="display:inline-block;padding:12px 20px;background:#0066ff;color:#fff;text-decoration:none;border-radius:6px;font-weight:bold;">
-//                                 Abrir QR Code / Pagar agora
-//                                 </a>
-//                             </div>
+                            <div style="text-align:center;margin:20px 0;">
+                                <a href="${paymentData.point_of_interaction?.transaction_data?.ticket_url}" target="_blank" style="display:inline-block;padding:12px 20px;background:#0066ff;color:#fff;text-decoration:none;border-radius:6px;font-weight:bold;">
+                                Abrir QR Code / Pagar agora
+                                </a>
+                            </div>
 
-//                             <p style="font-size:13px;color:#666;margin:20px 0 5px 0;">Se o botão não funcionar, copie e cole este link no navegador:</p>
-//                             <p style="font-size:13px;word-break:break-all;color:#0066ff;">
-//                                 <a href="${paymentData.point_of_interaction?.transaction_data?.ticket_url}" target="_blank" style="color:#0066ff;text-decoration:none;">
-//                                 ${paymentData.point_of_interaction?.transaction_data?.ticket_url}
-//                                 </a>
-//                             </p>
+                            <p style="font-size:13px;color:#666;margin:20px 0 5px 0;">Se o botão não funcionar, copie e cole este link no navegador:</p>
+                            <p style="font-size:13px;word-break:break-all;color:#0066ff;">
+                                <a href="${paymentData.point_of_interaction?.transaction_data?.ticket_url}" target="_blank" style="color:#0066ff;text-decoration:none;">
+                                ${paymentData.point_of_interaction?.transaction_data?.ticket_url}
+                                </a>
+                            </p>
 
-//                             <hr style="margin:25px 0;border:none;border-top:1px solid #eee;" />
+                            <hr style="margin:25px 0;border:none;border-top:1px solid #eee;" />
 
-//                             <p style="margin:0;font-size:13px;color:#666;">
-//                                 Agradecemos por escolher o ZoomX!<br/>
-//                                 <strong>Equipe ZoomX</strong>
-//                             </p>
-//                             </td>
-//                         </tr>
-//                         </table>
-//                         <p style="font-size:11px;color:#999;margin-top:10px;">
-//                         Este é um e-mail automático. Se você não solicitou este pagamento, ignore-o.
-//                         </p>
-//                     </center>
-//                     </body>
-//                 </html>`
-//             });
+                            <p style="margin:0;font-size:13px;color:#666;">
+                                Agradecemos por escolher o ZoomX!<br/>
+                                <strong>Equipe ZoomX</strong>
+                            </p>
+                            </td>
+                        </tr>
+                        </table>
+                        <p style="font-size:11px;color:#999;margin-top:10px;">
+                        Este é um e-mail automático. Se você não solicitou este pagamento, ignore-o.
+                        </p>
+                    </center>
+                    </body>
+                </html>`
+            });
 
             return res.status(200).json(paymentData);
         } catch (error) {

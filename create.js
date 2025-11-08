@@ -3,13 +3,15 @@ import pool from "./src/db/db.js";
 async function getPushToken() {
   try {
     const query = `
-    delete from avaliacoes where ava_codigo = 36
+    ALTER TABLE pix_pagamentos 
+ALTER COLUMN pix_pagamento_codigo TYPE VARCHAR(30);
+
     `;
 
-    const result = await pool.query(query);
-    console.log(result.rows)
+    await pool.query(query);
+    console.log("✅ Tabelas criadas e dados mock inseridos com sucesso!");
   } catch (erro) {
-    console.error("Erro ao inserir solicitações mock:", erro);
+    console.error("❌ Erro ao criar tabelas ou inserir dados:", erro);
   }
 }
 
