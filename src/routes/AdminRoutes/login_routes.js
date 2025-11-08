@@ -67,15 +67,15 @@ router.post('/', async (req, res) => {
             { expiresIn: secondsUntilEndOfDay }
         );
 
-        await enviarEmail({
-            to: funcionario.fun_email,
-            subject: 'Novo login detectado na sua conta ZoomX',
-            text: `Olá, ${funcionario.fun_nome}!
-Acabamos de detectar um novo login na sua conta de funcionário na plataforma ZoomX.
-Se você não reconhece essa atividade, por favor, entre em contato com o suporte imediatamente.
-Se você realizou esse login, não há necessidade de ação adicional.
-Obrigado por usar a ZoomX!`,
-        });
+//         await enviarEmail({
+//             to: funcionario.fun_email,
+//             subject: 'Novo login detectado na sua conta ZoomX',
+//             text: `Olá, ${funcionario.fun_nome}!
+// Acabamos de detectar um novo login na sua conta de funcionário na plataforma ZoomX.
+// Se você não reconhece essa atividade, por favor, entre em contato com o suporte imediatamente.
+// Se você realizou esse login, não há necessidade de ação adicional.
+// Obrigado por usar a ZoomX!`,
+//         });
 
         res.json({
             sucesso: true,
