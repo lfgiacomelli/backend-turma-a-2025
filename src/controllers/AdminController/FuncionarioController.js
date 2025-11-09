@@ -41,11 +41,11 @@ const FuncionarioController = {
         cpf
       ]);
 
-      await enviarEmail({
-        to: email,
-        subject: 'Bem-vindo à empresa!',
-        text: `Olá ${nome},\n\nSeu cadastro foi realizado com sucesso dentro da plataforma ZoomX! Lembre-se de manter seus dados atualizados e entre em contato conosco para qualquer dúvida.\n\nAtenciosamente,\nEquipe ZoomX \n\n Realize o pagamento da sua taxa diária para a empresa`
-      });
+      // await enviarEmail({
+      //   to: email,
+      //   subject: 'Bem-vindo à empresa!',
+      //   text: `Olá ${nome},\n\nSeu cadastro foi realizado com sucesso dentro da plataforma ZoomX! Lembre-se de manter seus dados atualizados e entre em contato conosco para qualquer dúvida.\n\nAtenciosamente,\nEquipe ZoomX \n\n Realize o pagamento da sua taxa diária para a empresa`
+      // });
 
       res.status(201).json({ mensagem: 'Funcionário adicionado com sucesso!' });
     } catch (error) {

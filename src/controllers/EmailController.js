@@ -53,17 +53,17 @@ ${data.message}
 </div>
       `.trim();
 
-            await enviarEmail({
-                to: '4fordevs@gmail.com',
-                subject: `Solicitação de contrato - ${data.name}`,
-                text: textoEmail,
-                html: htmlEmail,
-            });
+            // await enviarEmail({
+            //     to: '4fordevs@gmail.com',
+            //     subject: `Solicitação de contrato - ${data.name}`,
+            //     text: textoEmail,
+            //     html: htmlEmail,
+            // });
 
-            res.status(200).json({
-                success: true,
-                message: 'Email enviado!',
-            });
+            // res.status(200).json({
+            //     success: true,
+            //     message: 'Email enviado!',
+            // });
 
         } catch (error) {
             console.error('Erro ao enviar email:', error);

@@ -145,73 +145,73 @@ LIMIT 1;
 
             const viagem = result.rows[0];
 
-            await enviarEmail({
-                to: viagem.usu_email,
-                subject: 'Ajude-nos a melhorar: Avalie sua última viagem no ZoomX!',
-                html: `
-                    <!DOCTYPE html>
-                    <html lang="pt-BR">
-                    <head>
-                    <meta charset="utf-8">
-                    <meta name="viewport" content="width=device-width,initial-scale=1">
-                    <title>Avalie sua viagem</title>
-                    </head>
-                    <body style="margin:0;padding:0;background:#f4f6f8;font-family:Arial,sans-serif;">
-                    <center style="width:100%;padding:30px 12px;">
-                        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;background:#ffffff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                        <tr>
-                            <td style="padding:25px 20px;text-align:center;">
-                            <h2 style="margin:0 0 12px 0;color:#111827;font-size:22px;">Olá, <span style="color:#007bff;">${viagem.usu_nome}</span>!</h2>
-                            <p style="margin:0 0 18px 0;color:#444;font-size:15px;line-height:1.5;">
-                                Esperamos que sua experiência com o <strong>ZoomX</strong> tenha sido excelente 🚀.  
-                                Para continuarmos oferecendo um serviço de qualidade, gostaríamos de ouvir sua opinião sobre a sua última viagem.
-                            </p>
+            // await enviarEmail({
+            //     to: viagem.usu_email,
+            //     subject: 'Ajude-nos a melhorar: Avalie sua última viagem no ZoomX!',
+            //     html: `
+            //         <!DOCTYPE html>
+            //         <html lang="pt-BR">
+            //         <head>
+            //         <meta charset="utf-8">
+            //         <meta name="viewport" content="width=device-width,initial-scale=1">
+            //         <title>Avalie sua viagem</title>
+            //         </head>
+            //         <body style="margin:0;padding:0;background:#f4f6f8;font-family:Arial,sans-serif;">
+            //         <center style="width:100%;padding:30px 12px;">
+            //             <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;background:#ffffff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+            //             <tr>
+            //                 <td style="padding:25px 20px;text-align:center;">
+            //                 <h2 style="margin:0 0 12px 0;color:#111827;font-size:22px;">Olá, <span style="color:#007bff;">${viagem.usu_nome}</span>!</h2>
+            //                 <p style="margin:0 0 18px 0;color:#444;font-size:15px;line-height:1.5;">
+            //                     Esperamos que sua experiência com o <strong>ZoomX</strong> tenha sido excelente 🚀.  
+            //                     Para continuarmos oferecendo um serviço de qualidade, gostaríamos de ouvir sua opinião sobre a sua última viagem.
+            //                 </p>
 
-                            <!-- Estrelas -->
-                            <div style="margin:20px 0;">
-                                <table role="presentation" cellpadding="0" cellspacing="0" align="center">
-                                <tr>
-                                    ${[1, 2, 3, 4, 5].map(num => `
-                                    <td style="padding:0 4px;">
-                                        <a href="zoomx://AvaliarViagem/${viagem.via_codigo}?rating=${num}" target="_blank" style="text-decoration:none;">
-                                        <span style="font-size:32px;color:#ffcc00;">★</span>
-                                        </a>
-                                    </td>
-                                    `).join('')}
-                                </tr>
-                                </table>
-                                <p style="margin:8px 0 0 0;font-size:13px;color:#666;">Clique em uma estrela para avaliar</p>
-                            </div>
+            //                 <!-- Estrelas -->
+            //                 <div style="margin:20px 0;">
+            //                     <table role="presentation" cellpadding="0" cellspacing="0" align="center">
+            //                     <tr>
+            //                         ${[1, 2, 3, 4, 5].map(num => `
+            //                         <td style="padding:0 4px;">
+            //                             <a href="zoomx://AvaliarViagem/${viagem.via_codigo}?rating=${num}" target="_blank" style="text-decoration:none;">
+            //                             <span style="font-size:32px;color:#ffcc00;">★</span>
+            //                             </a>
+            //                         </td>
+            //                         `).join('')}
+            //                     </tr>
+            //                     </table>
+            //                     <p style="margin:8px 0 0 0;font-size:13px;color:#666;">Clique em uma estrela para avaliar</p>
+            //                 </div>
 
-                            <!-- Botão -->
-                            <div style="margin:20px 0;">
-                                <a href="zoomx://AvaliarViagem/${viagem.via_codigo}" target="_blank"
-                                style="display:inline-block;padding:12px 28px;background:#007bff;color:#fff;font-size:15px;font-weight:bold;text-decoration:none;border-radius:6px;">
-                                Avaliar agora
-                                </a>
-                            </div>
+            //                 <!-- Botão -->
+            //                 <div style="margin:20px 0;">
+            //                     <a href="zoomx://AvaliarViagem/${viagem.via_codigo}" target="_blank"
+            //                     style="display:inline-block;padding:12px 28px;background:#007bff;color:#fff;font-size:15px;font-weight:bold;text-decoration:none;border-radius:6px;">
+            //                     Avaliar agora
+            //                     </a>
+            //                 </div>
 
-                            <p style="margin:16px 0 0 0;font-size:14px;color:#555;line-height:1.5;">
-                                Ao abrir o app, você verá um pop-up na tela inicial para facilitar sua avaliação.<br>
-                                Sua opinião faz toda a diferença para que possamos melhorar cada vez mais 🙌
-                            </p>
+            //                 <p style="margin:16px 0 0 0;font-size:14px;color:#555;line-height:1.5;">
+            //                     Ao abrir o app, você verá um pop-up na tela inicial para facilitar sua avaliação.<br>
+            //                     Sua opinião faz toda a diferença para que possamos melhorar cada vez mais 🙌
+            //                 </p>
 
-                            <hr style="border:none;border-top:1px solid #eee;margin:25px 0;">
+            //                 <hr style="border:none;border-top:1px solid #eee;margin:25px 0;">
 
-                            <p style="margin:0;font-size:13px;color:#777;">
-                                Obrigado por escolher o ZoomX!<br>
-                                <em>Equipe ZoomX - Mototáxi e Entregas Rápidas</em>
-                            </p>
-                            </td>
-                        </tr>
-                        </table>
-                        <p style="font-size:11px;color:#aaa;margin-top:10px;">
-                        Este é um e-mail automático. Por favor, não responda.
-                        </p>
-                    </center>
-                    </body>
-                    </html>`
-            });
+            //                 <p style="margin:0;font-size:13px;color:#777;">
+            //                     Obrigado por escolher o ZoomX!<br>
+            //                     <em>Equipe ZoomX - Mototáxi e Entregas Rápidas</em>
+            //                 </p>
+            //                 </td>
+            //             </tr>
+            //             </table>
+            //             <p style="font-size:11px;color:#aaa;margin-top:10px;">
+            //             Este é um e-mail automático. Por favor, não responda.
+            //             </p>
+            //         </center>
+            //         </body>
+            //         </html>`
+            // });
 
 
             await pool.query(

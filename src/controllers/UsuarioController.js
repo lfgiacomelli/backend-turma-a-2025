@@ -84,40 +84,40 @@ const UsuarioController = {
         process.env.JWT_SECRET,
         { expiresIn: '45d' }
       );
-      try {
-              await enviarEmail({
-                to: usuario.usu_email,
-                subject: 'Seja bem-vindo ao ZoomX!',
-                html: `
-                  <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 30px; color: #333;">
-                    <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                      <h2 style="color: #00c853;">🎉 Bem-vindo ao ZoomX!</h2>
+      // try {
+      //         await enviarEmail({
+      //           to: usuario.usu_email,
+      //           subject: 'Seja bem-vindo ao ZoomX!',
+      //           html: `
+      //             <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 30px; color: #333;">
+      //               <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      //                 <h2 style="color: #00c853;">🎉 Bem-vindo ao ZoomX!</h2>
 
-                      <p>Olá, <strong>${usuario.usu_nome}</strong>!</p>
+      //                 <p>Olá, <strong>${usuario.usu_nome}</strong>!</p>
 
-                      <p>Estamos muito felizes em ter você com a gente! 😊</p>
+      //                 <p>Estamos muito felizes em ter você com a gente! 😊</p>
 
-                      <p>Com o <strong>ZoomX</strong>, você tem uma solução prática e rápida para suas corridas e entregas pela cidade.</p>
+      //                 <p>Com o <strong>ZoomX</strong>, você tem uma solução prática e rápida para suas corridas e entregas pela cidade.</p>
 
-                      <p>Sua conta foi criada com sucesso e você já pode começar a usar o app agora mesmo.</p>
+      //                 <p>Sua conta foi criada com sucesso e você já pode começar a usar o app agora mesmo.</p>
 
-                      <p>Se tiver qualquer dúvida ou precisar de ajuda, nossa equipe está sempre à disposição.</p>
+      //                 <p>Se tiver qualquer dúvida ou precisar de ajuda, nossa equipe está sempre à disposição.</p>
 
-                      <p>Obrigado por escolher o ZoomX! 🙌</p>
+      //                 <p>Obrigado por escolher o ZoomX! 🙌</p>
 
-                      <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;" />
+      //                 <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;" />
 
-                      <p style="font-size: 14px; color: #999;">Equipe ZoomX - Mototáxi e Entregas Rápidas</p>
-                    </div>
-                  </div>
-      `
+      //                 <p style="font-size: 14px; color: #999;">Equipe ZoomX - Mototáxi e Entregas Rápidas</p>
+      //               </div>
+      //             </div>
+      // `
 
-              });
+      //         });
 
-      } catch (error) {
-      console.error('Erro ao enviar email de boas-vindas:', error);
-      return res.status(500).json({ message: 'Erro ao enviar email de boas-vindas' });
-      }
+      // } catch (error) {
+      // console.error('Erro ao enviar email de boas-vindas:', error);
+      // return res.status(500).json({ message: 'Erro ao enviar email de boas-vindas' });
+      // }
 
 
       return res.status(201).json({
