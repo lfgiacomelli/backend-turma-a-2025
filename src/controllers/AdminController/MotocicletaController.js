@@ -1,5 +1,4 @@
 import pool from '../../db/db.js';
-import { enviarEmail } from '../../utils/email.js';
 const MotocicletaController = {
   async listar(req, res) {
     try {

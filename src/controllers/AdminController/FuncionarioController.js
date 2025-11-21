@@ -1,6 +1,5 @@
 import bcrypt from 'bcryptjs';
 import pool from '../../db/db.js';
-import { enviarEmail } from '../../utils/email.js';
 import path from 'path';
 import fs from 'fs';
 
@@ -40,12 +39,6 @@ const FuncionarioController = {
         cargo,
         cpf
       ]);
-
-      // await enviarEmail({
-      //   to: email,
-      //   subject: 'Bem-vindo à empresa!',
-      //   text: `Olá ${nome},\n\nSeu cadastro foi realizado com sucesso dentro da plataforma ZoomX! Lembre-se de manter seus dados atualizados e entre em contato conosco para qualquer dúvida.\n\nAtenciosamente,\nEquipe ZoomX \n\n Realize o pagamento da sua taxa diária para a empresa`
-      // });
 
       res.status(201).json({ mensagem: 'Funcionário adicionado com sucesso!' });
     } catch (error) {
@@ -216,49 +209,7 @@ WHERE f.fun_ativo = TRUE
     }
   },
 
-  async verificarAusenciaFuncionarios() {
-    try {
-      const funcionarios = await pool.query(`SELECT fun_codigo, fun_email, fun_nome FROM funcionarios WHERE fun_ativo = true`);
-
-      for (const funcionario of funcionarios.rows) {
-        const { fun_codigo, fun_email, fun_nome } = funcionario;
-
-        const pagamentos = await pool.query(`
-        SELECT pag_status, pag_data
-        FROM pagamentos
-        WHERE fun_codigo = $1
-        ORDER BY pag_data DESC
-        LIMIT 3
-      `, [fun_codigo]);
-
-        const ultimosPagamentos = pagamentos.rows;
-
-        const todosPendentes = ultimosPagamentos.length === 3 && ultimosPagamentos.every(p => p.pag_status === 'pendente');
-
-        if (todosPendentes) {
-          await enviarEmail({
-            to: fun_email,
-            subject: 'Ausência de atividades no ZoomX',
-            body: `Olá, ${fun_nome},
-
-Esperamos que você esteja bem. Notamos que os seus três últimos pagamentos ainda constam como pendentes, o que pode indicar que você esteve ausente nos últimos dias.
-
-Queremos nos certificar de que está tudo certo com você. Se estiver enfrentando qualquer dificuldade ou precisar de ajuda, por favor, não hesite em entrar em contato com nossa equipe de gestão. Estamos aqui para apoiar você.
-
-Agradecemos por fazer parte do ZoomX e esperamos vê-lo em breve ativo novamente.
-
-Com carinho,
-Equipe ZoomX
-          `
-          });
-
-          console.log(`Email enviado para ${fun_email}`);
-        }
-      }
-    } catch (error) {
-      console.error('Erro ao verificar ausência de funcionários:', error);
-    }
-  },
+  
   async viagensDoFuncionario(req, res) {
     const { funCodigo } = req.params;
 

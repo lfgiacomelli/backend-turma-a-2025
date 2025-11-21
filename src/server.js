@@ -17,6 +17,7 @@ import routesAvaliacao from './routes/avaliacao_routes.js';
 import routesPayment from './routes/payment_routes.js';
 import routesAddress from './routes/address_routes.js';
 import routesEmail from './routes/email_contratacao.js';
+import routesDownload from './routes/download_routes.js';
 
 import routesAdminMotocicleta from './routes/AdminRoutes/motocicleta_routes.js';
 import routesAdminUsuario from './routes/AdminRoutes/usuario_routes.js';
@@ -54,6 +55,7 @@ server.use('/api/avaliacoes', routesAvaliacao);
 server.use('/api/payments', routesPayment);
 server.use('/api/enderecos', routesAddress);
 server.use('/api/email', routesEmail);
+server.use('/api/downloads', routesDownload)
 
 server.use('/api/admin/usuarios', routesAdminUsuario);
 server.use('/api/admin/solicitacoes', routesAdminSolicitacao);

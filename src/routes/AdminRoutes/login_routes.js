@@ -7,7 +7,6 @@ dotenv.config();
 
 const router = express.Router();
 import pool from '../../db/db.js';
-import { enviarEmail } from '../../utils/email.js';
 
 const JWT_SECRET = process.env.JWT_SECRET_ADMIN;
 if (!JWT_SECRET) {
@@ -66,17 +65,6 @@ router.post('/', async (req, res) => {
             JWT_SECRET,
             { expiresIn: secondsUntilEndOfDay }
         );
-
-//         await enviarEmail({
-//             to: funcionario.fun_email,
-//             subject: 'Novo login detectado na sua conta ZoomX',
-//             text: `Olá, ${funcionario.fun_nome}!
-// Acabamos de detectar um novo login na sua conta de funcionário na plataforma ZoomX.
-// Se você não reconhece essa atividade, por favor, entre em contato com o suporte imediatamente.
-// Se você realizou esse login, não há necessidade de ação adicional.
-// Obrigado por usar a ZoomX!`,
-//         });
-
         res.json({
             sucesso: true,
             mensagem: 'Login realizado com sucesso!',
