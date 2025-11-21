@@ -1,5 +1,5 @@
 import express from 'express';
-import DownloadController from '../controllers/DownloadController';
+import DownloadController from '../controllers/DownloadController.js';
 
 const router = express.Router();
 
