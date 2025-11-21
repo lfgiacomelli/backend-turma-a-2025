@@ -12,4 +12,4 @@ class DownloadController {
   }
 }
 
-module.exports = new DownloadController();
+export default DownloadController;

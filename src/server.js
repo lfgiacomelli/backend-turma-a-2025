@@ -55,7 +55,7 @@ server.use('/api/avaliacoes', routesAvaliacao);
 server.use('/api/payments', routesPayment);
 server.use('/api/enderecos', routesAddress);
 server.use('/api/email', routesEmail);
-server.use('/api/downloads', routesDownload)
+server.use('/api/downloads', routesDownload);
 
 server.use('/api/admin/usuarios', routesAdminUsuario);
 server.use('/api/admin/solicitacoes', routesAdminSolicitacao);
